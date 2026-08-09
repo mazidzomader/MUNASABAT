@@ -1,0 +1,18 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ── users ──────────────────────────────────────────────────────────────
+    // A user may only read/write their own document.
+    // No user can read or modify another user's profile.
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // ── Everything else — locked until subsequent phases open them ──────────
+    // Each collection will be opened with proper rules as features are built.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
