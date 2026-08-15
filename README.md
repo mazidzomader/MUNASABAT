@@ -25,12 +25,12 @@
 <img src="https://img.shields.io/badge/Flutter-02569B?logo=flutter&logoColor=white"/>
 <img src="https://img.shields.io/badge/Dart-0175C2?logo=dart&logoColor=white"/>
 <img src="https://img.shields.io/badge/Firebase-FFCA28?logo=firebase&logoColor=black"/>
-<img src="https://img.shields.io/badge/Google%20Maps-4285F4?logo=googlemaps&logoColor=white"/>
-<img src="https://img.shields.io/badge/QR%20Code-000000"/>
+<img src="https://img.shields.io/badge/OpenStreetMap-7EBC6F?logo=openstreetmap&logoColor=white"/>
+<img src="https://img.shields.io/badge/Riverpod-000000?logo=dart&logoColor=white"/>
 <br>
-<img src="https://img.shields.io/badge/OTP%20Authentication-success"/>
+<img src="https://img.shields.io/badge/SSLCommerz%20Payments-00A651?logoColor=white"/>
+<img src="https://img.shields.io/badge/QR%20Code-000000"/>
 <img src="https://img.shields.io/badge/Push%20Notifications-orange"/>
-<img src="https://img.shields.io/badge/Flutter%20Packages-blue"/>
 <img src="https://img.shields.io/badge/Android-Mobile-green"/>
 
 </div>
