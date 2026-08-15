@@ -106,23 +106,15 @@
 
 - **Status:** Not Started
 
-### Phase 11 — Notifications
+### Phase 11 — User Profile
 
 - **Status:** Not Started
 
-### Phase 12 — User Profile
+### Phase 12 — Premium Wedding Features (Sandbox Payments)
 
 - **Status:** Not Started
 
-### Phase 13 — Premium Wedding Features (Sandbox Payments)
-
-- **Status:** Not Started
-
-### Phase 14 — Admin Dashboard
-
-- **Status:** Not Started
-
-### Phase 15 — Polish & Hardening
+### Phase 13 — Polish & Hardening
 
 - **Status:** Not Started
 
@@ -133,7 +125,7 @@
 | Date       | Decision                                                                                              | Reason                                                                                                                    |
 | ---------- | ----------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
 | 2026-08-09 | Removed the Wedding Vendors Directory feature entirely                                                | Cut from scope by product owner                                                                                           |
-| 2026-08-09 | Added Wedding Gifts (cash gifting) and Premium Wedding Features via shared Stripe sandbox integration | Product owner requested; monetization + guest gifting                                                                     |
+| 2026-08-09 | Added Wedding Gifts (cash gifting) and Premium Wedding Features via shared SSLCommerz sandbox integration | Product owner requested; monetization + guest gifting                                                                     |
 | 2026-08-09 | Payments run in **sandbox/test mode only** for the entire build                                       | Explicit instruction; going live requires separate compliance/KYC review                                                  |
 | 2026-08-09 | Phone/OTP login removed — phone number is optional registration field only                            | Product owner decision: "phone is only for registration, not required any OTP. Remove phone login. Only Email is enough." |
 | 2026-08-10 | Sidebar drawer navigation instead of bottom nav bar for host dashboard                                | Product owner preference expressed during dashboard design session                                                        |
@@ -147,7 +139,7 @@
 - [ ] Co-host / multiple hosts per event — needed for MVP or later?
 - [ ] Contact import — attempted in MVP or deferred?
 - [ ] Can guests see other guests' RSVP status, or only their own?
-- [ ] Which payment gateway/PSP for the sandbox integration — Stripe Test Mode (default assumption) or a regional provider?
+- [ ] Which payment gateway/PSP for the sandbox integration — SSLCommerz Sandbox Mode (default assumption) or a regional provider?
 - [ ] What is the free-tier guest cap that Premium's "Unlimited Guests" removes?
 - [ ] Can hosts set a minimum/suggested gift amount, or is it always guest-entered free-form?
 - [ ] Does the platform take a commission on gifts, or is 100% attributed to the host?

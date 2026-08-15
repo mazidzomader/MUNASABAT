@@ -101,13 +101,13 @@ The agent must build in this order. Do not start a phase until the previous one 
 ## Phase 8 — Wedding Gifts / Cash Gifts (Sandbox Payments)
 **Goal:** Guests can send a digital cash gift to the host through a sandbox payment flow; hosts can see what they've received.
 **Scope:**
-- Stripe Test Mode integration: `flutter_stripe` client SDK + Cloud Functions `createGiftPaymentIntent` and `stripeWebhookHandler` (see `Architecture.md` §9, `Rules.md` §11)
-- Guest-side "Send Wedding Gift" screen: amount entry, optional personal message, "send anonymously" toggle, Stripe payment sheet
+- SSLCommerz Sandbox integration: flutter SDK/Webview + Cloud Functions `createGiftPaymentIntent` and `sslcommerzWebhookHandler`
+- Guest-side "Send Wedding Gift" screen: amount entry, optional personal message, "send anonymously" toggle, SSLCommerz payment sheet
 - Guest-side transaction history (their own sent gifts)
 - Host-side gift wallet: total received, per-gift list (name or "Anonymous", amount, message, timestamp), gift summary stats
 - Webhook handler is the only writer of `paymentStatus: "succeeded"` — no client-side trust
 
-**Exit criteria:** A guest sends a test gift using a Stripe test card (e.g., `4242 4242 4242 4242`), sees a success confirmation, and the host's wallet/transaction history immediately reflects it — including a correctly anonymized entry when "send anonymously" was used. A declined test card correctly shows a failure state without crediting the host.
+**Exit criteria:** A guest sends a test gift using an SSLCommerz test card, sees a success confirmation, and the host's wallet/transaction history immediately reflects it — including a correctly anonymized entry when "send anonymously" was used. A declined test card correctly shows a failure state without crediting the host.
 
 ---
 
@@ -132,17 +132,7 @@ The agent must build in this order. Do not start a phase until the previous one 
 
 ---
 
-## Phase 11 — Notifications
-**Goal:** Push notifications for key lifecycle events.
-**Scope:**
-- FCM setup (client token registration + permission prompt)
-- Cloud Function triggers: new invitation, RSVP confirmation, event reminder (scheduled), new gallery upload, checklist reminder, gift received, premium unlock confirmed
-
-**Exit criteria:** Creating an invitation, RSVPing, uploading a gallery photo, and receiving a test gift each trigger a real push notification to the relevant user's device.
-
----
-
-## Phase 12 — User Profile
+## Phase 11 — User Profile
 **Goal:** Users can view/edit their profile and see their event history.
 **Scope:**
 - Profile screen: picture, name, phone, email (edit)
@@ -152,11 +142,11 @@ The agent must build in this order. Do not start a phase until the previous one 
 
 ---
 
-## Phase 13 — Premium Wedding Features (Sandbox Payments)
+## Phase 12 — Premium Wedding Features (Sandbox Payments)
 **Goal:** Hosts can unlock premium features for an event via a sandbox purchase.
 **Scope:**
 - Paywall screen listing premium features: Unlimited Guests, Extra Cloud Storage, HD Gallery
-- Reuses the Phase 8 Stripe Test Mode integration (`createPremiumPaymentIntent`, same webhook handler pattern)
+- Reuses the Phase 8 SSLCommerz Sandbox integration (`createPremiumPaymentIntent`, same webhook handler pattern)
 - On confirmed webhook success, `events/{eventId}/premium.isPremium` flips to `true` and `unlockedFeatures` updates
 - Guest cap / storage cap / gallery quality logic in relevant features (Guests, Memories) reads this flag
 
@@ -164,19 +154,7 @@ The agent must build in this order. Do not start a phase until the previous one 
 
 ---
 
-## Phase 14 — Admin Dashboard
-**Goal:** Admins can moderate users and events.
-**Scope:**
-- Role-gated `/admin` route
-- User management: view list, suspend, delete
-- Event management: view all events, remove inappropriate events
-- Payments oversight: read-only view of gift and premium transactions (sandbox data) for support/reconciliation
-
-**Exit criteria:** An admin-flagged account can log in, view all users/events, suspend a user, remove an event, and view a list of sandbox gift/premium transactions — and a non-admin cannot access `/admin/*` at all.
-
----
-
-## Phase 15 — Polish & Hardening
+## Phase 13 — Polish & Hardening
 **Goal:** Production-readiness pass.
 **Scope:**
 - Firestore Security Rules audit against Rules.md §4 and §11 (payments)
@@ -190,5 +168,5 @@ The agent must build in this order. Do not start a phase until the previous one 
 
 ## Notes on Phase Order
 
-- Phases 0–7 form the critical MVP path (auth → event → guests → invitations → check-in). Phase 8 (Gifts) is placed right after check-in because it reuses the guest portal built in Phase 6 and is a natural next step; Phase 13 (Premium) reuses Phase 8's payment plumbing, so it's placed after the features it gates (Guests, Memories) are built. Everything from Phase 9 onward can be reordered if there's a business reason, but the agent must not skip ahead without updating this file and `Memory.md` first.
+- Phases 0–7 form the critical MVP path (auth → event → guests → invitations → check-in). Phase 8 (Gifts) is placed right after check-in because it reuses the guest portal built in Phase 6 and is a natural next step; Phase 12 (Premium) reuses Phase 8's payment plumbing, so it's placed after the features it gates (Guests, Memories) are built. Everything from Phase 9 onward can be reordered if there's a business reason, but the agent must not skip ahead without updating this file and `Memory.md` first.
 - Contact import (mentioned as optional in `PRD.md`) is intentionally not its own phase — attempt it only as a stretch add-on inside Phase 4 once the core guest flow works.
