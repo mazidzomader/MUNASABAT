@@ -16,14 +16,13 @@ Wedding planning today is fragmented across spreadsheets, WhatsApp groups, paper
 
 | Persona | Description | Key Needs |
 |---|---|---|
-| **Host** | The couple or family member organizing the wedding | Plan event, manage budget/checklist, invite & track guests, check in guests day-of, share memories |
-| **Guest** | Invited attendee | Receive invitation, RSVP, view venue/date, check in via QR, view/download invitation, browse memories |
+| **User** | A registered user of the platform | Can act as a **Host** (create and plan events, manage budget, invite guests, share memories) OR a **Guest** (receive invitations, RSVP, check in, view memories, send gifts). Roles are contextual per event. |
 
 ## 4. Goals
 
-- Give hosts a single dashboard to run their wedding logistics.
+- Give users a single dashboard to run their wedding logistics and view events they are attending.
 - Digitize invitations with unique QR codes for fast, fraud-resistant check-in.
-- Give guests a frictionless, no-password (OTP) way to interact with their invitation.
+- Provide a unified email-based authentication system for all users.
 - Let guests send digital/cash wedding gifts to the host, and let hosts unlock premium features — both via **SSLCOMMERZ in sandbox mode** for this build (see §6.9 and §6.10).
 - Preserve wedding memories (photos/videos) in one shared, privacy-controlled gallery.
 
@@ -40,9 +39,8 @@ Wedding planning today is fragmented across spreadsheets, WhatsApp groups, paper
 ## 6. Feature List (Functional Requirements)
 
 ### 6.1 Authentication
-- Email registration & login
-- Mobile number authentication
-- OTP verification (for phone login and guest portal login)
+- Email registration & login (Primary unified method for all users)
+- Mobile number (Optional profile field)
 - Secure login/logout (session/token handling)
 - Password reset (email flow)
 - User profile management (edit name, photo, phone, email)
@@ -72,9 +70,9 @@ Wedding planning today is fragmented across spreadsheets, WhatsApp groups, paper
 - Scanning verifies validity and automatically flips guest status to `Checked In`
 - Duplicate scans of an already-checked-in guest must show a clear warning, not silently re-confirm
 
-### 6.6 Guest Portal
-- OTP login
-- View upcoming invitation(s)
+### 6.6 Attending Events (Formerly Guest Portal)
+- Unified login via Email
+- View upcoming invitation(s) alongside hosted events in the dashboard
 - View wedding details (date, venue, description)
 - Open venue in Google Maps
 - RSVP (Accept/Decline)
@@ -153,17 +151,17 @@ Premium is purchased per-event (not account-wide) via the same sandbox SSLCOMMER
 
 ## 8. Success Metrics (MVP)
 
-- A host can create an event, add 20+ guests, send invitations, and check guests in via QR without a crash, end-to-end, in a single sitting.
-- A guest can RSVP and view their QR invitation using only OTP login (no password ever required for guests).
+- A user acting as a host can create an event, add 20+ guests, send invitations, and check guests in via QR without a crash, end-to-end, in a single sitting.
+- A user acting as a guest can log in via their email account, RSVP, and view their QR invitation.
 - A guest can send a test wedding gift through the SSLCOMMERZ sandbox checkout and see it reflected in the host's wallet/transaction history.
 - A host can unlock a premium feature via a sandbox test transaction and immediately see it take effect (e.g., raised guest cap).
 
-## 9. Roles Summary
+## 9. Roles Summary (Contextual per Event)
 
-| Role | Can do |
+| Context | Can do |
 |---|---|
-| Host | Everything under their own event(s): event CRUD, guests, invitations, check-in, budget, checklist, memories, view gift wallet/transaction history, purchase premium features |
-| Guest | View own invitations, RSVP, view/download own QR, browse memories per privacy rules, send wedding gifts (optionally anonymous), view own gift history |
+| **Host** (User is `hostId`) | Everything under their own event(s): event CRUD, guests, invitations, check-in, budget, checklist, memories, view gift wallet/transaction history, purchase premium features |
+| **Guest** (User invited) | View own invitations, RSVP, view/download own QR, browse memories per privacy rules, send wedding gifts (optionally anonymous), view own gift history |
 
 ## 10. Open Questions (track in Memory.md as decisions are made)
 

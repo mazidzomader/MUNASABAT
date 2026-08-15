@@ -31,10 +31,10 @@ class AuthRepository {
 
   // ── Email / Password ───────────────────────────────────────────────────────
 
-  /// Registers a new host account with email and password.
+  /// Registers a new user account with email and password.
   ///
   /// Creates the Firebase Auth user, then writes a `users/{uid}` Firestore
-  /// document with [role] = "host". An optional [phone] number is stored
+  /// document. An optional [phone] number is stored
   /// as a profile field with no OTP verification.
   /// Throws [FirebaseAuthException] on failure.
   Future<void> registerWithEmail({
@@ -55,7 +55,6 @@ class AuthRepository {
       name: name,
       email: email,
       phone: phone,
-      role: 'host',
     );
   }
 
@@ -99,14 +98,12 @@ class AuthRepository {
     String? name,
     String? email,
     String? phone,
-    required String role,
   }) async {
     final model = UserModel(
       id: uid,
       name: name,
       email: email,
       phone: phone,
-      role: role,
       createdAt: DateTime.now(),
     );
     await _firestore.collection('users').doc(uid).set(model.toMap());

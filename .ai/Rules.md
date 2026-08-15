@@ -36,12 +36,12 @@ Server-side (Cloud Functions) additionally uses `@google-cloud/storage` (Node.js
 
 - Guest QR tokens must be server-generated, cryptographically random, and unique per guest+event — never derived from a predictable ID or timestamp.
 - Firestore Security Rules must enforce:
-  - A host can only read/write their own `events/*` documents and subcollections.
+  - A user can only read/write their own `events/*` documents and subcollections (where `hostId == request.auth.uid`).
   - A guest can only read the invitation/guest documents tied to their own `userId`.
-  - No user may modify another user's `users/*` document, and no host may edit or delete another host's event.
+  - No user may modify another user's `users/*` document, and no user may edit or delete another user's event.
   - Nobody can write directly to another guest's `status` field from the client — check-in must go through a Cloud Function that validates the QR token server-side.
   - Nobody can write `paymentStatus: "succeeded"` on a gift or premium document directly from the client — only the server-side SSLCOMMERZ IPN handler (via the Admin SDK) may set that field.
-- Since file storage is plain GCS (not Firebase Storage), it has no declarative rules layer — access control for uploads and for reads of **private** content must be enforced by the Cloud Functions that mint signed URLs (checking the caller's role/invite status before signing), not left to "the object path is hard to guess."
+- Since file storage is plain GCS (not Firebase Storage), it has no declarative rules layer — access control for uploads and for reads of **private** content must be enforced by the Cloud Functions that mint signed URLs (checking the caller's contextual role/invite status before signing), not left to "the object path is hard to guess."
 - Never log or print QR tokens, phone numbers, OTP codes, or GCS signed URLs to console in production builds.
 - Passwords are never stored or handled outside Firebase Auth's own flow.
 
@@ -81,7 +81,7 @@ Server-side (Cloud Functions) additionally uses `@google-cloud/storage` (Node.js
 - Do not add mock/fake data paths that silently replace real Firebase calls "to make progress" without clearly flagging it as temporary/mock in code comments and in `Memory.md`.
 - Do not implement any real/live payment flow — payments in this build are sandbox mode only, per `Rules.md` §11 and `Architecture.md` §10.
 - Do not build any vendor directory, vendor profiles, or vendor management tooling — this feature has been removed from scope entirely.
-- Do not build any admin role, admin dashboard, or platform-moderation tooling — this feature has been removed from scope entirely. There are only two roles: `host` and `guest`.
+- Do not build any admin role, admin dashboard, or platform-moderation tooling — this feature has been removed from scope entirely. There is only a single `User` role. Permissions are contextually derived from their relationship to an event (as a host or an invited guest).
 
 ## 10. Communication Style Expected From the Agent
 

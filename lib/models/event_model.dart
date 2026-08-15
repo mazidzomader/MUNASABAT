@@ -60,4 +60,30 @@ class EventModel {
       'privacy': privacy,
     };
   }
+
+  EventModel copyWith({
+    String? id,
+    String? hostId,
+    String? title,
+    DateTime? date,
+    String? venueName,
+    Map<String, double>? venueLatLng,
+    String? description,
+    String? coverImageUrl,
+    DateTime? createdAt,
+    String? privacy,
+  }) {
+    return EventModel(
+      id: id ?? this.id,
+      hostId: hostId ?? this.hostId,
+      title: title ?? this.title,
+      date: date ?? this.date,
+      venueName: venueName ?? this.venueName,
+      venueLatLng: venueLatLng ?? this.venueLatLng,
+      description: description ?? this.description,
+      coverImageUrl: coverImageUrl ?? this.coverImageUrl,
+      createdAt: createdAt ?? this.createdAt,
+      privacy: privacy ?? this.privacy,
+    );
+  }
 }

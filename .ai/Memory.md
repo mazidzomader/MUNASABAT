@@ -8,9 +8,9 @@
 
 ## Project Status Snapshot
 
-- **Current phase:** Phase 2 — Host Dashboard (In Progress)
-- **Last updated:** 2026-08-10
-- **Overall state:** Phase 1 complete (auth refactored to email-only). Splash screen built and wired. Host Dashboard shell built with sidebar navigation. UI polish applied across auth and dashboard screens.
+- **Current phase:** Phase 3 — Checklist & Budget Tracker (Up Next)
+- **Last updated:** 2026-08-15
+- **Overall state:** Phase 2 complete. Dashboard stats partially wired. Full Event CRUD implemented with OpenStreetMap interactive location picker and Nominatim search.
 
 ---
 
@@ -49,31 +49,30 @@
   - Email is the only login method. Phone is an optional profile field.
   - `google-services.json` updated with SHA fingerprints for proper Firebase Auth on Android.
 
-### Phase 2 — Host Dashboard & Event Creation
+### Phase 2 — Unified Dashboard & Event Creation
 
-- **Status:** In Progress
+- **Status:** Done
 - **What was built:**
   - **Splash Screen** (`lib/features/auth/screens/splash_screen.dart`):
     - Animated logo zoom-in (`Curves.elasticOut`, 1.2s) + fade-in.
-    - Full-screen blue/pink gradient background using `AppGradients`.
-    - Real logo loaded from `assets/img/Munasabat Logo.png` (registered in `pubspec.yaml`).
     - Auto-navigates to `/login` after animation. Router redirect sends authenticated users to `/dashboard`.
-    - Route: `/splash` set as `initialLocation` in `AppRouter`.
-  - **Host Dashboard Shell** (`lib/features/host_dashboard/screens/dashboard_screen.dart`):
-    - Personalized greeting header with blue/pink gradient wash and time-based greeting.
-    - Hamburger ☰ button opens a slide-in sidebar drawer.
-    - **Sidebar drawer** contains: Events, Guests, Budget, Gifts, Items, Memories, Subscription Plan — each with a tinted icon. Sign Out at the bottom.
-    - **Stats Grid** (2×2): Events, Guests, Tasks Done %, Budget Used — each card has its own tinted background and matching shadow.
-    - **Recent Activity** section with welcome tips (will be replaced with real data in later phases).
+  - **Unified Dashboard** (`lib/features/host_dashboard/screens/dashboard_screen.dart`):
+    - Replaced Host Dashboard with a Unified Dashboard (for merged User roles).
+    - **Stats Grid** (2×2): Wired up `hostEventsProvider` and `attendingEventsProvider` for real-time event counts.
+    - Sidebar drawer navigation (Events, Guests, Budget, Gifts, etc.).
+  - **Event Management** (`lib/features/event/screens/create_event_screen.dart`, `edit_event_screen.dart`):
+    - Created `EventRepository` to handle event CRUD in Firestore.
+    - Built Create, Edit, and Detail screens.
+    - **Interactive Map Picker**: Implemented `flutter_map` with OpenStreetMap.
+    - Added free **Nominatim Search** to the map picker for finding venues.
+    - Built mini-map view on `EventDetailScreen` with an "Open in Maps" button utilizing Google Maps generic link structure.
 - **Deviations from the plan:**
-  - Dashboard shell built ahead of full event creation (event creation is still pending).
-  - Bottom nav from the Phase 2 plan replaced with a **sidebar drawer** per product owner preference.
+  - Bottom nav replaced with a **sidebar drawer** per product owner preference.
+  - Abandoned Google Maps premium interactive SDK due to API billing walls. Successfully implemented OpenStreetMap via `flutter_map`.
 - **Known issues / TODO:**
-  - Sidebar menu items (Events, Guests, Budget, etc.) are navigation stubs — `onTap` only closes the drawer; actual screens not yet built.
-  - Stats grid shows hardcoded `0` values — will be populated with real Firestore data as each feature phase lands.
-  - Event creation screen, Event Detail screen, Edit/Delete — **not yet built**.
+  - Sidebar menu items (Guests, Budget, etc.) are navigation stubs — `onTap` only closes the drawer.
 - **Decisions made:**
-  - Sidebar drawer navigation instead of bottom nav bar for the host dashboard.
+  - Use OpenStreetMap (`flutter_map`) instead of Google Maps API.
 
 ### Phase 3 — Checklist & Budget Tracker
 
@@ -138,6 +137,8 @@
 | 2026-08-09 | Payments run in **sandbox/test mode only** for the entire build                                       | Explicit instruction; going live requires separate compliance/KYC review                                                  |
 | 2026-08-09 | Phone/OTP login removed — phone number is optional registration field only                            | Product owner decision: "phone is only for registration, not required any OTP. Remove phone login. Only Email is enough." |
 | 2026-08-10 | Sidebar drawer navigation instead of bottom nav bar for host dashboard                                | Product owner preference expressed during dashboard design session                                                        |
+| 2026-08-15 | Generalized Users (Host and Guest merged into single User role)                                       | Product owner requested unified experience where any user can both create and join events.                                |
+| 2026-08-15 | Switched from Google Maps API to OpenStreetMap (`flutter_map`)                                        | Google Maps API key required billing account. OpenStreetMap + Nominatim search achieved same goals completely free.       |
 
 ---
 
@@ -155,6 +156,5 @@
 
 ## Known Technical Debt / Shortcuts Taken
 
-- Dashboard stats (Events, Guests, Tasks Done %, Budget Used) are hardcoded to `0` — stub until Firestore queries are wired in Phase 2–3.
+- Dashboard stats for Guests, Tasks Done %, and Budget Used are still hardcoded to `0` — waiting for Phase 3 and Phase 4.
 - Sidebar drawer navigation items are stubs (close drawer only) — routes will be connected as screens are built in subsequent phases.
-- `GuestHomeScreen` is a placeholder screen — full guest portal builds in Phase 6.

@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_gradients.dart';
 import '../../../core/theme/app_text_styles.dart';
 import '../../../providers/auth_provider.dart';
+import '../../../providers/event_provider.dart';
+import 'package:intl/intl.dart';
 
 /// Host Dashboard — overview of the host's wedding planning workspace.
 class DashboardScreen extends ConsumerStatefulWidget {
@@ -31,29 +34,113 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
         userEmail: userEmail,
         ref: ref,
       ),
-      body: CustomScrollView(
-        slivers: [
-          _DashboardHeader(
-            userName: userName,
-            onMenuTap: () => _scaffoldKey.currentState?.openDrawer(),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => context.push('/event/create'),
+        backgroundColor: AppColors.brandInk,
+        child: const Icon(Icons.add, color: AppColors.surface),
+      ),
+      body: DefaultTabController(
+        length: 2,
+        child: NestedScrollView(
+          headerSliverBuilder: (context, innerBoxIsScrolled) {
+            return [
+              _DashboardHeader(
+                userName: userName,
+                onMenuTap: () => _scaffoldKey.currentState?.openDrawer(),
+              ),
+              SliverPadding(
+                padding: const EdgeInsets.fromLTRB(20, 24, 20, 16),
+                sliver: SliverList(
+                  delegate: SliverChildListDelegate([
+                    Text('Overview', style: AppTextStyles.titleMedium),
+                    const SizedBox(height: 12),
+                    const _StatsGrid(),
+                    const SizedBox(height: 28),
+                  ]),
+                ),
+              ),
+              SliverPersistentHeader(
+                pinned: true,
+                delegate: _SliverAppBarDelegate(
+                  TabBar(
+                    labelColor: AppColors.brandInk,
+                    unselectedLabelColor: AppColors.stone,
+                    indicatorColor: AppColors.brandInk,
+                    tabs: const [
+                      Tab(text: 'Hosting'),
+                      Tab(text: 'Attending'),
+                    ],
+                  ),
+                ),
+              ),
+            ];
+          },
+          body: const TabBarView(
+            children: [
+              _HostingTabView(),
+              _AttendingTabView(),
+            ],
           ),
-          SliverPadding(
-            padding: const EdgeInsets.fromLTRB(20, 24, 20, 0),
-            sliver: SliverList(
-              delegate: SliverChildListDelegate([
-                Text('Overview', style: AppTextStyles.titleMedium),
-                const SizedBox(height: 12),
-                const _StatsGrid(),
-                const SizedBox(height: 28),
-                Text('Recent Activity', style: AppTextStyles.titleMedium),
-                const SizedBox(height: 12),
-                const _RecentActivity(),
-                const SizedBox(height: 40),
-              ]),
-            ),
-          ),
+        ),
+      ),
+    );
+  }
+}
+
+// ── Tab Views ─────────────────────────────────────────────────────────────────
+
+class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
+  _SliverAppBarDelegate(this._tabBar);
+  final TabBar _tabBar;
+
+  @override
+  double get minExtent => _tabBar.preferredSize.height;
+  @override
+  double get maxExtent => _tabBar.preferredSize.height;
+
+  @override
+  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
+    return Container(
+      color: AppColors.cream,
+      child: _tabBar,
+    );
+  }
+
+  @override
+  bool shouldRebuild(_SliverAppBarDelegate oldDelegate) {
+    return false;
+  }
+}
+
+class _HostingTabView extends StatelessWidget {
+  const _HostingTabView();
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.fromLTRB(20, 24, 20, 40),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const _HostEventsList(),
+          const SizedBox(height: 28),
+          Text('Recent Activity', style: AppTextStyles.titleMedium),
+          const SizedBox(height: 12),
+          const _RecentActivity(),
         ],
       ),
+    );
+  }
+}
+
+class _AttendingTabView extends StatelessWidget {
+  const _AttendingTabView();
+
+  @override
+  Widget build(BuildContext context) {
+    return const SingleChildScrollView(
+      padding: EdgeInsets.fromLTRB(20, 24, 20, 40),
+      child: _AttendingEventsList(),
     );
   }
 }
@@ -99,7 +186,7 @@ class _AppDrawer extends StatelessWidget {
             child: ListView.separated(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               itemCount: _items.length,
-              separatorBuilder: (_, __) => const SizedBox(height: 4),
+              separatorBuilder: (context, index) => const SizedBox(height: 4),
               itemBuilder: (_, i) => _DrawerTile(item: _items[i]),
             ),
           ),
@@ -212,12 +299,12 @@ class _DrawerItem {
   final Color bgColor;
 }
 
-class _DrawerTile extends StatelessWidget {
+class _DrawerTile extends ConsumerWidget {
   const _DrawerTile({required this.item});
   final _DrawerItem item;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return ListTile(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       hoverColor: item.bgColor,
@@ -229,7 +316,12 @@ class _DrawerTile extends StatelessWidget {
       ),
       title: Text(item.label, style: AppTextStyles.titleMedium),
       trailing: const Icon(Icons.chevron_right_rounded, color: AppColors.stone, size: 20),
-      onTap: () => Navigator.of(context).pop(),
+      onTap: () {
+        Navigator.of(context).pop();
+        if (item.label == 'Events') {
+          context.push('/events');
+        }
+      },
     );
   }
 }
@@ -250,7 +342,6 @@ class _DashboardHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final w = MediaQuery.of(context).size.width;
     return SliverToBoxAdapter(
       child: Stack(
         children: [
@@ -321,11 +412,15 @@ class _HeaderButton extends StatelessWidget {
 
 // ── Stats Grid ────────────────────────────────────────────────────────────────
 
-class _StatsGrid extends StatelessWidget {
+class _StatsGrid extends ConsumerWidget {
   const _StatsGrid();
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final hostEventsCount = ref.watch(hostEventsProvider).valueOrNull?.length ?? 0;
+    final attendingEventsCount = ref.watch(attendingEventsProvider).valueOrNull?.length ?? 0;
+    final totalEvents = hostEventsCount + attendingEventsCount;
+
     return GridView.count(
       crossAxisCount: 2,
       shrinkWrap: true,
@@ -333,11 +428,11 @@ class _StatsGrid extends StatelessWidget {
       crossAxisSpacing: 12,
       mainAxisSpacing: 12,
       childAspectRatio: 1.35,
-      children: const [
-        _StatCard(label: 'Events',     value: '0',  icon: Icons.event_rounded,                   iconColor: AppColors.accentBlue,      bgColor: Color(0xFFDFEBFF)),
-        _StatCard(label: 'Guests',     value: '0',  icon: Icons.people_outline_rounded,           iconColor: AppColors.accentPink,      bgColor: Color(0xFFFFE4FA)),
-        _StatCard(label: 'Tasks Done', value: '0%', icon: Icons.checklist_rounded,                iconColor: AppColors.statusAccepted,  bgColor: Color(0xFFD9F0E4)),
-        _StatCard(label: 'Budget Used',value: '৳0', icon: Icons.account_balance_wallet_outlined,  iconColor: AppColors.statusPending,   bgColor: Color(0xFFFFF0CC)),
+      children: [
+        _StatCard(label: 'Events',     value: '$totalEvents',  icon: Icons.event_rounded,                   iconColor: AppColors.accentBlue,      bgColor: const Color(0xFFDFEBFF)),
+        const _StatCard(label: 'Guests',     value: '0',  icon: Icons.people_outline_rounded,           iconColor: AppColors.accentPink,      bgColor: Color(0xFFFFE4FA)),
+        const _StatCard(label: 'Tasks Done', value: '0%', icon: Icons.checklist_rounded,                iconColor: AppColors.statusAccepted,  bgColor: Color(0xFFD9F0E4)),
+        const _StatCard(label: 'Budget Used',value: '৳0', icon: Icons.account_balance_wallet_outlined,  iconColor: AppColors.statusPending,   bgColor: Color(0xFFFFF0CC)),
       ],
     );
   }
@@ -398,6 +493,197 @@ class _StatCard extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+// ── Host Events List ──────────────────────────────────────────────────────────
+
+class _HostEventsList extends ConsumerWidget {
+  const _HostEventsList();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final eventsAsync = ref.watch(hostEventsProvider);
+
+    return eventsAsync.when(
+      data: (events) {
+        if (events.isEmpty) {
+          return Container(
+            padding: const EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              color: AppColors.surface,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: AppColors.divider),
+            ),
+            child: const Center(
+              child: Text(
+                'No events yet. Create one to get started!',
+                style: TextStyle(color: AppColors.stone),
+              ),
+            ),
+          );
+        }
+
+        return ListView.separated(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: events.length,
+          separatorBuilder: (context, index) => const SizedBox(height: 16),
+          itemBuilder: (context, index) {
+            final event = events[index];
+            return GestureDetector(
+              onTap: () => context.push('/event/${event.id}'),
+              child: Container(
+                decoration: BoxDecoration(
+                    color: AppColors.surface,
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: AppColors.divider),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppColors.ink.withAlpha(10),
+                        blurRadius: 10,
+                        offset: const Offset(0, 3),
+                      ),
+                    ],
+                  ),
+                  clipBehavior: Clip.antiAlias,
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          event.title,
+                          style: AppTextStyles.titleMedium.copyWith(color: AppColors.brandInk),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        const SizedBox(height: 8),
+                        Row(
+                          children: [
+                            const Icon(Icons.calendar_today_rounded, size: 12, color: AppColors.accentBlue),
+                            const SizedBox(width: 6),
+                            Expanded(
+                              child: Text(
+                                DateFormat('MMM d, yyyy').format(event.date),
+                                style: AppTextStyles.labelSmall.copyWith(color: AppColors.charcoal),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            },
+        );
+      },
+      loading: () => const Center(
+        child: Padding(
+          padding: EdgeInsets.all(24.0),
+          child: CircularProgressIndicator(color: AppColors.brandInk),
+        ),
+      ),
+      error: (err, _) => Text('Error loading events: $err'),
+    );
+  }
+}
+
+// ── Attending Events List ─────────────────────────────────────────────────────
+
+class _AttendingEventsList extends ConsumerWidget {
+  const _AttendingEventsList();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final eventsAsync = ref.watch(attendingEventsProvider);
+
+    return eventsAsync.when(
+      data: (events) {
+        if (events.isEmpty) {
+          return Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              color: AppColors.surface,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: AppColors.divider),
+            ),
+            child: const Center(
+              child: Text(
+                'You have not joined any events yet.',
+                style: TextStyle(color: AppColors.stone),
+              ),
+            ),
+          );
+        }
+
+        return ListView.separated(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: events.length,
+          separatorBuilder: (context, index) => const SizedBox(height: 16),
+          itemBuilder: (context, index) {
+            final event = events[index];
+            return GestureDetector(
+              onTap: () => context.push('/event/${event.id}'),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: AppColors.surface,
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: AppColors.divider),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.ink.withAlpha(10),
+                      blurRadius: 10,
+                      offset: const Offset(0, 3),
+                    ),
+                  ],
+                ),
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      event.title,
+                      style: AppTextStyles.titleMedium.copyWith(color: AppColors.brandInk),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        const Icon(Icons.calendar_today_rounded, size: 12, color: AppColors.accentBlue),
+                        const SizedBox(width: 6),
+                        Expanded(
+                          child: Text(
+                            DateFormat('MMM d, yyyy').format(event.date),
+                            style: AppTextStyles.labelSmall.copyWith(color: AppColors.charcoal),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+      loading: () => const Center(
+        child: Padding(
+          padding: EdgeInsets.all(24.0),
+          child: CircularProgressIndicator(color: AppColors.brandInk),
+        ),
+      ),
+      error: (err, _) => Text('Error loading events: $err'),
     );
   }
 }

@@ -21,6 +21,7 @@ class AppTextField extends StatelessWidget {
     this.enabled = true,
     this.autofocus = false,
     this.maxLength,
+    this.maxLines = 1,
   });
 
   final String label;
@@ -36,6 +37,7 @@ class AppTextField extends StatelessWidget {
   final bool enabled;
   final bool autofocus;
   final int? maxLength;
+  final int? maxLines;
 
   @override
   Widget build(BuildContext context) {
@@ -54,6 +56,7 @@ class AppTextField extends StatelessWidget {
           enabled: enabled,
           autofocus: autofocus,
           maxLength: maxLength,
+          maxLines: maxLines,
           style: AppTextStyles.bodyLarge,
           decoration: InputDecoration(
             hintText: hint,

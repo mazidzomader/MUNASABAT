@@ -29,10 +29,10 @@ The agent must build in this order. Do not start a phase until the previous one 
 
 ---
 
-## Phase 2 — Host Dashboard & Event Creation
-**Goal:** Hosts can create and view their wedding event.
+## Phase 2 — Unified Dashboard & Event Creation
+**Goal:** Users can create new events and see an overview of events they are hosting or attending.
 **Scope:**
-- Host Dashboard shell (bottom nav: Dashboard, Guests, Calendar, Profile)
+- Unified Dashboard shell (Tabs for "Hosting" and "Attending", plus sidebar drawer navigation)
 - Create Event screen (title, date/time picker, venue name, Google Maps location picker/link, description, cover image upload)
 - Event Detail screen showing all entered info
 - Edit/Delete event
@@ -75,15 +75,15 @@ The agent must build in this order. Do not start a phase until the previous one 
 
 ---
 
-## Phase 6 — Guest Portal (OTP-based)
-**Goal:** Guests can log in via OTP and interact with their own invitation.
+## Phase 6 — Attending Events (Unified Flow)
+**Goal:** Invited users can manage their received invitations from the dashboard.
 **Scope:**
-- Guest OTP login (reuses Phase 1 phone/OTP flow, routes to guest landing instead of host dashboard based on role/context)
-- View upcoming invitation(s), event details, "Open in Google Maps"
+- View upcoming invitation(s) from the "Attending" tab on the dashboard
+- View event details, "Open in Google Maps"
 - RSVP (Accept/Decline) — writes back to `guests/{guestId}.status`
 - View own QR code, Download invitation (image/PDF)
 
-**Exit criteria:** A guest logs in with only a phone number + OTP (no password), sees their invitation, RSVPs, and downloads their QR invitation as an image or PDF.
+**Exit criteria:** A user taps on an event they are invited to from the dashboard, sees their invitation, RSVPs, and downloads their QR invitation as an image or PDF.
 
 ---
 

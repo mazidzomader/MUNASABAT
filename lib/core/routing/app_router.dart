@@ -7,7 +7,12 @@ import '../../features/auth/screens/login_screen.dart';
 import '../../features/auth/screens/register_screen.dart';
 import '../../features/auth/screens/splash_screen.dart';
 import '../../features/host_dashboard/screens/dashboard_screen.dart';
-import '../../features/guest_portal/screens/guest_home_screen.dart';
+import '../../features/event/screens/create_event_screen.dart';
+import '../../features/event/screens/edit_event_screen.dart';
+import '../../features/event/screens/event_detail_screen.dart';
+import '../../features/event/screens/event_list_screen.dart';
+import '../../features/event/screens/location_picker_screen.dart';
+import 'package:latlong2/latlong.dart';
 import '../../providers/auth_provider.dart';
 
 /// All named routes used throughout the app.
@@ -16,7 +21,11 @@ abstract class AppRoutes {
   static const login = '/login';
   static const register = '/register';
   static const dashboard = '/dashboard';
-  static const guestHome = '/guest/home';
+  static const eventsList = '/events';
+  static const createEvent = '/event/create';
+  static const editEvent = '/event/:eventId/edit';
+  static const eventDetail = '/event/:eventId';
+  static const locationPicker = '/location-picker';
 }
 
 /// A refresh notifier to trigger GoRouter redirects when auth state changes.
@@ -56,22 +65,14 @@ final routerProvider = Provider<GoRouter>((ref) {
       if (!isLoggedIn && !isOnAuth) return AppRoutes.login;
       
       if (isLoggedIn && isOnAuth) {
-        final userModelAsync = ref.read(currentUserModelProvider);
-        if (userModelAsync.isLoading) {
-          // Wait on the current screen (e.g. splash or login) until role is fetched
-          return null; 
-        }
-        
-        final role = userModelAsync.valueOrNull?.role;
-        if (role == 'guest') return AppRoutes.guestHome;
-        return AppRoutes.dashboard; // Fallback
+        return AppRoutes.dashboard;
       }
       return null;
     },
     routes: [
       GoRoute(
         path: AppRoutes.splash,
-        builder: (_, __) => const SplashScreen(),
+        builder: (context, state) => const SplashScreen(),
       ),
       GoRoute(
         path: AppRoutes.login,
@@ -86,8 +87,33 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (ctx2, _) => const DashboardScreen(),
       ),
       GoRoute(
-        path: AppRoutes.guestHome,
-        builder: (ctx3, _) => const GuestHomeScreen(),
+        path: AppRoutes.eventsList,
+        builder: (ctx, _) => const EventListScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.createEvent,
+        builder: (ctx, _) => const CreateEventScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.editEvent,
+        builder: (ctx, state) {
+          final eventId = state.pathParameters['eventId']!;
+          return EditEventScreen(eventId: eventId);
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.eventDetail,
+        builder: (ctx, state) {
+          final eventId = state.pathParameters['eventId']!;
+          return EventDetailScreen(eventId: eventId);
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.locationPicker,
+        builder: (context, state) {
+          final initial = state.extra as LatLng?;
+          return LocationPickerScreen(initialLocation: initial);
+        },
       ),
     ],
     errorBuilder: (_, state) => Scaffold(

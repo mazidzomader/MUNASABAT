@@ -141,7 +141,7 @@ functions/                          # Firebase Cloud Functions (Node.js/TypeScri
 
 ```
 users/{userId}
-  - name, email, phone, photoUrl, role ("host" | "guest")
+  - name, email, phone, photoUrl
   - hostedEventIds: [string]
   - attendedEventIds: [string]
   - createdAt
@@ -200,7 +200,7 @@ events/{eventId}/premium
 /register
 /otp
 /reset-password
-/dashboard                 (host home — bottom nav: Dashboard, Guests, Calendar, Profile)
+/dashboard                 (Unified dashboard with Hosting / Attending tabs)
 /event/create
 /event/:eventId
 /event/:eventId/checklist
@@ -214,14 +214,13 @@ events/{eventId}/premium
 /premium/:eventId                  (host — paywall)
 /profile
 
-# Guest portal (same app, role-based landing)
-/guest/home
+# Invites and attending interactions are accessed from the unified /dashboard
 /guest/invitation/:invitationId
 /guest/rsvp/:invitationId
 /guest/gift/:invitationId           (send a wedding gift)
 ```
 
-Route guards: unauthenticated users are redirected to `/login`. Host-only routes (e.g., `/event/:eventId/*`) check that `users/{userId}.role == "host"` and that the requesting user is that event's `hostId`.
+Route guards: unauthenticated users are redirected to `/login`. Host-only routes (e.g., `/event/:eventId/budget`) check that the requesting user's `userId` matches the event's `hostId`. All authenticated users are directed to `/dashboard` as their home.
 
 ## 7. State Management Convention
 
