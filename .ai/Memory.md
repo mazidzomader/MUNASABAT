@@ -53,26 +53,29 @@
 
 - **Status:** Done
 - **What was built:**
-  - **Splash Screen** (`lib/features/auth/screens/splash_screen.dart`):
+  - **Splash Screen & Auth Screens** (`lib/features/auth/auth_screen.dart`):
     - Animated logo zoom-in (`Curves.elasticOut`, 1.2s) + fade-in.
     - Auto-navigates to `/login` after animation. Router redirect sends authenticated users to `/dashboard`.
-  - **Unified Dashboard** (`lib/features/host_dashboard/screens/dashboard_screen.dart`):
+    - Consolidated Login, Registration, and Forgot Password flows in a single file.
+  - **Unified Dashboard** (`lib/features/dashboard/dashboard_screen.dart`):
     - Replaced Host Dashboard with a Unified Dashboard (for merged User roles).
     - **Stats Grid** (2×2): Wired up `hostEventsProvider` and `attendingEventsProvider` for real-time event counts.
     - Sidebar drawer navigation (Events, Guests, Budget, Gifts, etc.).
-  - **Event Management** (`lib/features/event/screens/create_event_screen.dart`, `edit_event_screen.dart`):
+  - **Event Management** (`lib/features/event/event_screen.dart`):
     - Created `EventRepository` to handle event CRUD in Firestore.
-    - Built Create, Edit, and Detail screens.
+    - Consolidated Create, Edit, Detail, List, and Map Picker screens into a single feature file.
     - **Interactive Map Picker**: Implemented `flutter_map` with OpenStreetMap.
     - Added free **Nominatim Search** to the map picker for finding venues.
     - Built mini-map view on `EventDetailScreen` with an "Open in Maps" button utilizing Google Maps generic link structure.
 - **Deviations from the plan:**
   - Bottom nav replaced with a **sidebar drawer** per product owner preference.
   - Abandoned Google Maps premium interactive SDK due to API billing walls. Successfully implemented OpenStreetMap via `flutter_map`.
+  - Implemented features consolidated into **1 Dart file per feature module** (`auth_screen.dart`, `dashboard_screen.dart`, `event_screen.dart`).
 - **Known issues / TODO:**
   - Sidebar menu items (Guests, Budget, etc.) are navigation stubs — `onTap` only closes the drawer.
 - **Decisions made:**
   - Use OpenStreetMap (`flutter_map`) instead of Google Maps API.
+  - Use 1 Dart file per feature module for all UI screens and subwidgets.
 
 ### Phase 3 — Checklist & Budget Tracker
 
@@ -131,6 +134,7 @@
 | 2026-08-10 | Sidebar drawer navigation instead of bottom nav bar for host dashboard                                | Product owner preference expressed during dashboard design session                                                        |
 | 2026-08-15 | Generalized Users (Host and Guest merged into single User role)                                       | Product owner requested unified experience where any user can both create and join events.                                |
 | 2026-08-15 | Switched from Google Maps API to OpenStreetMap (`flutter_map`)                                        | Google Maps API key required billing account. OpenStreetMap + Nominatim search achieved same goals completely free.       |
+| 2026-08-16 | 1 Dart file per feature module for all UI screens and subwidgets                                      | Project architecture requirement: consolidate screens within each feature into a single self-contained file.             |
 
 ---
 

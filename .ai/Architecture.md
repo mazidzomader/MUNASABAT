@@ -91,38 +91,29 @@ lib/
 │   └── payment_provider.dart       # drives gift sending + premium purchase UI state (incl. WebView checkout lifecycle)
 ├── features/
 │   ├── auth/
-│   │   ├── screens/                # login, register, otp, reset_password
-│   │   └── widgets/
-│   ├── onboarding/
-│   ├── host_dashboard/
-│   │   ├── screens/
-│   │   └── widgets/
+│   │   └── auth_screen.dart        # Unified Auth (splash, login, register, forgot password)
+│   ├── dashboard/
+│   │   └── dashboard_screen.dart   # Unified Dashboard (overview, drawer, tabs, stats)
 │   ├── event/
-│   │   ├── screens/                # create_event, event_detail, checklist, budget
-│   │   └── widgets/
+│   │   └── event_screen.dart       # Event Management (create, edit, detail, list, location picker)
 │   ├── guests/
-│   │   ├── screens/                # guest_list, add_guest, guest_detail
-│   │   └── widgets/
+│   │   └── guest_screen.dart       # Guest Management (guest list, add guest, guest detail)
 │   ├── invitations/
-│   │   ├── screens/                # invitation_preview, share_sheet
-│   │   └── widgets/
+│   │   └── invitation_screen.dart  # Digital Invitations (preview, share)
 │   ├── checkin/
-│   │   ├── screens/                # qr_scanner_screen
-│   │   └── widgets/
+│   │   └── checkin_screen.dart     # QR Check-In scanner
 │   ├── guest_portal/
-│   │   ├── screens/                # my_invitations, rsvp, my_qr
-│   │   └── widgets/
+│   │   └── attending_screen.dart   # Attending events (my invitations, RSVP, my QR)
 │   ├── calendar/
+│   │   └── calendar_screen.dart    # Event calendar view
 │   ├── gifts/
-│   │   ├── screens/                # send_gift, gift_confirmation, transaction_history, gift_summary (host)
-│   │   └── widgets/
+│   │   └── gift_screen.dart        # Wedding gifts (send gift, wallet, history)
 │   ├── premium/
-│   │   ├── screens/                # paywall, premium_confirmation
-│   │   └── widgets/
+│   │   └── premium_screen.dart     # Premium paywall & feature unlock
 │   ├── memories/
-│   │   ├── screens/                # gallery, upload, photo_detail
-│   │   └── widgets/
+│   │   └── memory_screen.dart      # Wedding memories gallery & media upload
 │   └── profile/
+│       └── profile_screen.dart     # User profile management
 └── services/
     ├── notification_service.dart   # FCM setup, topic/token handling
     ├── qr_service.dart             # QR payload generation/parsing helpers (client-side display only)

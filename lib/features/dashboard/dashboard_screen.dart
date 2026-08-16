@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-
-import '../../../core/theme/app_colors.dart';
-import '../../../core/theme/app_gradients.dart';
-import '../../../core/theme/app_text_styles.dart';
-import '../../../providers/auth_provider.dart';
-import '../../../providers/event_provider.dart';
 import 'package:intl/intl.dart';
 
-/// Host Dashboard — overview of the host's wedding planning workspace.
+import '../../core/theme/app_colors.dart';
+import '../../core/theme/app_gradients.dart';
+import '../../core/theme/app_text_styles.dart';
+import '../../providers/auth_provider.dart';
+import '../../providers/event_provider.dart';
+
+// =============================================================================
+// UNIFIED DASHBOARD SCREEN
+// =============================================================================
+
+/// Unified Dashboard — overview of the user's wedding planning & attending workspace.
 class DashboardScreen extends ConsumerStatefulWidget {
   const DashboardScreen({super.key});
 
@@ -99,7 +103,8 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
   double get maxExtent => _tabBar.preferredSize.height;
 
   @override
-  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
+  Widget build(
+      BuildContext context, double shrinkOffset, bool overlapsContent) {
     return Container(
       color: AppColors.cream,
       child: _tabBar,
@@ -159,13 +164,41 @@ class _AppDrawer extends StatelessWidget {
   final WidgetRef ref;
 
   static const List<_DrawerItem> _items = [
-    _DrawerItem(icon: Icons.event_rounded,                  label: 'Events',            iconColor: AppColors.accentBlue,       bgColor: Color(0xFFEEF4FF)),
-    _DrawerItem(icon: Icons.people_outline_rounded,          label: 'Guests',            iconColor: AppColors.accentPink,       bgColor: Color(0xFFFDF0FB)),
-    _DrawerItem(icon: Icons.account_balance_wallet_outlined, label: 'Budget',            iconColor: AppColors.statusPending,    bgColor: Color(0xFFFDF8EC)),
-    _DrawerItem(icon: Icons.card_giftcard_rounded,           label: 'Gifts',             iconColor: AppColors.statusAccepted,   bgColor: Color(0xFFEEF7F2)),
-    _DrawerItem(icon: Icons.checklist_rounded,               label: 'Items',             iconColor: AppColors.brandInkLight,    bgColor: Color(0xFFF3EDE8)),
-    _DrawerItem(icon: Icons.photo_library_outlined,          label: 'Memories',          iconColor: AppColors.statusCheckedIn,  bgColor: Color(0xFFEBF2F8)),
-    _DrawerItem(icon: Icons.workspace_premium_outlined,      label: 'Subscription Plan', iconColor: AppColors.accentPink,       bgColor: Color(0xFFFDF0FB)),
+    _DrawerItem(
+        icon: Icons.event_rounded,
+        label: 'Events',
+        iconColor: AppColors.accentBlue,
+        bgColor: Color(0xFFEEF4FF)),
+    _DrawerItem(
+        icon: Icons.people_outline_rounded,
+        label: 'Guests',
+        iconColor: AppColors.accentPink,
+        bgColor: Color(0xFFFDF0FB)),
+    _DrawerItem(
+        icon: Icons.account_balance_wallet_outlined,
+        label: 'Budget',
+        iconColor: AppColors.statusPending,
+        bgColor: Color(0xFFFDF8EC)),
+    _DrawerItem(
+        icon: Icons.card_giftcard_rounded,
+        label: 'Gifts',
+        iconColor: AppColors.statusAccepted,
+        bgColor: Color(0xFFEEF7F2)),
+    _DrawerItem(
+        icon: Icons.checklist_rounded,
+        label: 'Items',
+        iconColor: AppColors.brandInkLight,
+        bgColor: Color(0xFFF3EDE8)),
+    _DrawerItem(
+        icon: Icons.photo_library_outlined,
+        label: 'Memories',
+        iconColor: AppColors.statusCheckedIn,
+        bgColor: Color(0xFFEBF2F8)),
+    _DrawerItem(
+        icon: Icons.workspace_premium_outlined,
+        label: 'Subscription Plan',
+        iconColor: AppColors.accentPink,
+        bgColor: Color(0xFFFDF0FB)),
   ];
 
   @override
@@ -198,7 +231,8 @@ class _AppDrawer extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 0, 16, 32),
             child: ListTile(
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12)),
               tileColor: const Color(0xFFFFF0F0),
               leading: Container(
                 width: 36,
@@ -236,11 +270,18 @@ class _DrawerHeader extends StatelessWidget {
       children: [
         Positioned.fill(
           child: ClipRRect(
-            borderRadius: const BorderRadius.only(topRight: Radius.circular(24)),
+            borderRadius:
+                const BorderRadius.only(topRight: Radius.circular(24)),
             child: Row(
               children: [
-                Expanded(child: Container(decoration: const BoxDecoration(gradient: AppGradients.heroBlue))),
-                Expanded(child: Container(decoration: const BoxDecoration(gradient: AppGradients.heroPink))),
+                Expanded(
+                    child: Container(
+                        decoration:
+                            const BoxDecoration(gradient: AppGradients.heroBlue))),
+                Expanded(
+                    child: Container(
+                        decoration:
+                            const BoxDecoration(gradient: AppGradients.heroPink))),
               ],
             ),
           ),
@@ -258,9 +299,13 @@ class _DrawerHeader extends StatelessWidget {
                     color: AppColors.surface,
                     shape: BoxShape.circle,
                     border: Border.all(color: AppColors.divider, width: 2),
-                    boxShadow: [BoxShadow(color: AppColors.ink.withAlpha(15), blurRadius: 8)],
+                    boxShadow: [
+                      BoxShadow(
+                          color: AppColors.ink.withAlpha(15), blurRadius: 8)
+                    ],
                   ),
-                  child: const Icon(Icons.person_outline_rounded, color: AppColors.charcoal, size: 26),
+                  child: const Icon(Icons.person_outline_rounded,
+                      color: AppColors.charcoal, size: 26),
                 ),
                 const SizedBox(width: 14),
                 Expanded(
@@ -268,11 +313,13 @@ class _DrawerHeader extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(userName,
-                          style: AppTextStyles.titleMedium.copyWith(color: AppColors.brandInk),
+                          style: AppTextStyles.titleMedium
+                              .copyWith(color: AppColors.brandInk),
                           overflow: TextOverflow.ellipsis),
                       if (userEmail.isNotEmpty)
                         Text(userEmail,
-                            style: AppTextStyles.bodyMedium.copyWith(color: AppColors.charcoal),
+                            style: AppTextStyles.bodyMedium
+                                .copyWith(color: AppColors.charcoal),
                             overflow: TextOverflow.ellipsis),
                     ],
                   ),
@@ -311,11 +358,13 @@ class _DrawerTile extends ConsumerWidget {
       leading: Container(
         width: 36,
         height: 36,
-        decoration: BoxDecoration(color: item.bgColor, borderRadius: BorderRadius.circular(10)),
+        decoration: BoxDecoration(
+            color: item.bgColor, borderRadius: BorderRadius.circular(10)),
         child: Icon(item.icon, color: item.iconColor, size: 19),
       ),
       title: Text(item.label, style: AppTextStyles.titleMedium),
-      trailing: const Icon(Icons.chevron_right_rounded, color: AppColors.stone, size: 20),
+      trailing: const Icon(Icons.chevron_right_rounded,
+          color: AppColors.stone, size: 20),
       onTap: () {
         Navigator.of(context).pop();
         if (item.label == 'Events') {
@@ -346,13 +395,23 @@ class _DashboardHeader extends StatelessWidget {
       child: Stack(
         children: [
           Positioned(
-            top: 0, left: 0, right: 0, height: 200,
-            child: Container(decoration: const BoxDecoration(gradient: AppGradients.heroBlue))),
+              top: 0,
+              left: 0,
+              right: 0,
+              height: 200,
+              child: Container(
+                  decoration:
+                      const BoxDecoration(gradient: AppGradients.heroBlue))),
           Positioned(
-            top: 0, left: 0, right: 0, height: 200,
+            top: 0,
+            left: 0,
+            right: 0,
+            height: 200,
             child: Opacity(
               opacity: 0.6,
-              child: Container(decoration: const BoxDecoration(gradient: AppGradients.heroPink)),
+              child: Container(
+                  decoration:
+                      const BoxDecoration(gradient: AppGradients.heroPink)),
             ),
           ),
           SafeArea(
@@ -364,18 +423,26 @@ class _DashboardHeader extends StatelessWidget {
                 children: [
                   Row(
                     children: [
-                      _HeaderButton(icon: Icons.menu_rounded, color: AppColors.brandInk, onTap: onMenuTap),
+                      _HeaderButton(
+                          icon: Icons.menu_rounded,
+                          color: AppColors.brandInk,
+                          onTap: onMenuTap),
                       const Spacer(),
-                      _HeaderButton(icon: Icons.notifications_none_rounded, color: AppColors.charcoal, onTap: () {}),
+                      _HeaderButton(
+                          icon: Icons.notifications_none_rounded,
+                          color: AppColors.charcoal,
+                          onTap: () {}),
                     ],
                   ),
                   const SizedBox(height: 20),
                   Text('Good $_greeting,',
-                      style: AppTextStyles.bodyLarge.copyWith(color: AppColors.charcoal)),
+                      style: AppTextStyles.bodyLarge
+                          .copyWith(color: AppColors.charcoal)),
                   Text(userName, style: AppTextStyles.headlineMedium),
                   const SizedBox(height: 6),
                   Text('Plan your perfect celebration 🎉',
-                      style: AppTextStyles.bodyMedium.copyWith(color: AppColors.charcoal)),
+                      style: AppTextStyles.bodyMedium
+                          .copyWith(color: AppColors.charcoal)),
                 ],
               ),
             ),
@@ -387,7 +454,8 @@ class _DashboardHeader extends StatelessWidget {
 }
 
 class _HeaderButton extends StatelessWidget {
-  const _HeaderButton({required this.icon, required this.color, required this.onTap});
+  const _HeaderButton(
+      {required this.icon, required this.color, required this.onTap});
   final IconData icon;
   final Color color;
   final VoidCallback onTap;
@@ -417,8 +485,10 @@ class _StatsGrid extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final hostEventsCount = ref.watch(hostEventsProvider).valueOrNull?.length ?? 0;
-    final attendingEventsCount = ref.watch(attendingEventsProvider).valueOrNull?.length ?? 0;
+    final hostEventsCount =
+        ref.watch(hostEventsProvider).valueOrNull?.length ?? 0;
+    final attendingEventsCount =
+        ref.watch(attendingEventsProvider).valueOrNull?.length ?? 0;
     final totalEvents = hostEventsCount + attendingEventsCount;
 
     return GridView.count(
@@ -429,10 +499,30 @@ class _StatsGrid extends ConsumerWidget {
       mainAxisSpacing: 12,
       childAspectRatio: 1.35,
       children: [
-        _StatCard(label: 'Events',     value: '$totalEvents',  icon: Icons.event_rounded,                   iconColor: AppColors.accentBlue,      bgColor: const Color(0xFFDFEBFF)),
-        const _StatCard(label: 'Guests',     value: '0',  icon: Icons.people_outline_rounded,           iconColor: AppColors.accentPink,      bgColor: Color(0xFFFFE4FA)),
-        const _StatCard(label: 'Tasks Done', value: '0%', icon: Icons.checklist_rounded,                iconColor: AppColors.statusAccepted,  bgColor: Color(0xFFD9F0E4)),
-        const _StatCard(label: 'Budget Used',value: '৳0', icon: Icons.account_balance_wallet_outlined,  iconColor: AppColors.statusPending,   bgColor: Color(0xFFFFF0CC)),
+        _StatCard(
+            label: 'Events',
+            value: '$totalEvents',
+            icon: Icons.event_rounded,
+            iconColor: AppColors.accentBlue,
+            bgColor: const Color(0xFFDFEBFF)),
+        const _StatCard(
+            label: 'Guests',
+            value: '0',
+            icon: Icons.people_outline_rounded,
+            iconColor: AppColors.accentPink,
+            bgColor: Color(0xFFFFE4FA)),
+        const _StatCard(
+            label: 'Tasks Done',
+            value: '0%',
+            icon: Icons.checklist_rounded,
+            iconColor: AppColors.statusAccepted,
+            bgColor: Color(0xFFD9F0E4)),
+        const _StatCard(
+            label: 'Budget Used',
+            value: '৳0',
+            icon: Icons.account_balance_wallet_outlined,
+            iconColor: AppColors.statusPending,
+            bgColor: Color(0xFFFFF0CC)),
       ],
     );
   }
@@ -486,9 +576,11 @@ class _StatCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(value,
-                  style: AppTextStyles.titleLarge.copyWith(color: AppColors.brandInk)),
+                  style: AppTextStyles.titleLarge
+                      .copyWith(color: AppColors.brandInk)),
               Text(label,
-                  style: AppTextStyles.bodyMedium.copyWith(color: AppColors.charcoal)),
+                  style: AppTextStyles.bodyMedium
+                      .copyWith(color: AppColors.charcoal)),
             ],
           ),
         ],
@@ -536,51 +628,54 @@ class _HostEventsList extends ConsumerWidget {
               onTap: () => context.push('/event/${event.id}'),
               child: Container(
                 decoration: BoxDecoration(
-                    color: AppColors.surface,
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: AppColors.divider),
-                    boxShadow: [
-                      BoxShadow(
-                        color: AppColors.ink.withAlpha(10),
-                        blurRadius: 10,
-                        offset: const Offset(0, 3),
+                  color: AppColors.surface,
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: AppColors.divider),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.ink.withAlpha(10),
+                      blurRadius: 10,
+                      offset: const Offset(0, 3),
+                    ),
+                  ],
+                ),
+                clipBehavior: Clip.antiAlias,
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        event.title,
+                        style: AppTextStyles.titleMedium
+                            .copyWith(color: AppColors.brandInk),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(height: 8),
+                      Row(
+                        children: [
+                          const Icon(Icons.calendar_today_rounded,
+                              size: 12, color: AppColors.accentBlue),
+                          const SizedBox(width: 6),
+                          Expanded(
+                            child: Text(
+                              DateFormat('MMM d, yyyy').format(event.date),
+                              style: AppTextStyles.labelSmall
+                                  .copyWith(color: AppColors.charcoal),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
-                  clipBehavior: Clip.antiAlias,
-                  child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          event.title,
-                          style: AppTextStyles.titleMedium.copyWith(color: AppColors.brandInk),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        const SizedBox(height: 8),
-                        Row(
-                          children: [
-                            const Icon(Icons.calendar_today_rounded, size: 12, color: AppColors.accentBlue),
-                            const SizedBox(width: 6),
-                            Expanded(
-                              child: Text(
-                                DateFormat('MMM d, yyyy').format(event.date),
-                                style: AppTextStyles.labelSmall.copyWith(color: AppColors.charcoal),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
                 ),
-              );
-            },
+              ),
+            );
+          },
         );
       },
       loading: () => const Center(
@@ -651,19 +746,22 @@ class _AttendingEventsList extends ConsumerWidget {
                   children: [
                     Text(
                       event.title,
-                      style: AppTextStyles.titleMedium.copyWith(color: AppColors.brandInk),
+                      style: AppTextStyles.titleMedium
+                          .copyWith(color: AppColors.brandInk),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
                     const SizedBox(height: 8),
                     Row(
                       children: [
-                        const Icon(Icons.calendar_today_rounded, size: 12, color: AppColors.accentBlue),
+                        const Icon(Icons.calendar_today_rounded,
+                            size: 12, color: AppColors.accentBlue),
                         const SizedBox(width: 6),
                         Expanded(
                           child: Text(
                             DateFormat('MMM d, yyyy').format(event.date),
-                            style: AppTextStyles.labelSmall.copyWith(color: AppColors.charcoal),
+                            style: AppTextStyles.labelSmall
+                                .copyWith(color: AppColors.charcoal),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -708,8 +806,8 @@ class _RecentActivity extends StatelessWidget {
           ),
         ],
       ),
-      child: Column(
-        children: const [
+      child: const Column(
+        children: [
           _ActivityItem(
             icon: Icons.celebration_outlined,
             iconColor: AppColors.accentBlue,
@@ -769,10 +867,12 @@ class _ActivityItem extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(title,
-                        style: AppTextStyles.titleMedium.copyWith(color: AppColors.ink)),
+                        style: AppTextStyles.titleMedium
+                            .copyWith(color: AppColors.ink)),
                     const SizedBox(height: 2),
                     Text(subtitle,
-                        style: AppTextStyles.bodyMedium.copyWith(color: AppColors.charcoal)),
+                        style: AppTextStyles.bodyMedium
+                            .copyWith(color: AppColors.charcoal)),
                   ],
                 ),
               ),

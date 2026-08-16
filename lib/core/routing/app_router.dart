@@ -3,15 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../features/auth/screens/login_screen.dart';
-import '../../features/auth/screens/register_screen.dart';
-import '../../features/auth/screens/splash_screen.dart';
-import '../../features/host_dashboard/screens/dashboard_screen.dart';
-import '../../features/event/screens/create_event_screen.dart';
-import '../../features/event/screens/edit_event_screen.dart';
-import '../../features/event/screens/event_detail_screen.dart';
-import '../../features/event/screens/event_list_screen.dart';
-import '../../features/event/screens/location_picker_screen.dart';
+import '../../features/auth/auth_screen.dart';
+import '../../features/dashboard/dashboard_screen.dart';
+import '../../features/event/event_screen.dart';
 import 'package:latlong2/latlong.dart';
 import '../../providers/auth_provider.dart';
 

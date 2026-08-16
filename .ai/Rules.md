@@ -26,8 +26,8 @@ Server-side (Cloud Functions) additionally uses `@google-cloud/storage` (Node.js
 ## 3. Code Style & Structure
 
 - Follow the folder structure in `Architecture.md` exactly. Do not invent new top-level folders under `lib/` without updating `Architecture.md`.
-- One class per file; file name matches the class name in `snake_case`.
-- Widgets that exceed ~200 lines should be split into smaller private widgets or moved to `widgets/`.
+- **1 Dart file per feature module:** Each implemented feature under `lib/features/<feature>/` is organized into a single cohesive Dart file containing its screens and related subwidgets (e.g., `auth_screen.dart`, `dashboard_screen.dart`, `event_screen.dart`).
+- Shared models, repositories, providers, and core utilities retain dedicated individual files matching their class/purpose.
 - No business logic inside widget `build()` methods beyond simple conditional rendering — logic belongs in providers/repositories.
 - All public methods/classes get a short doc comment (`///`) explaining purpose, especially in `repositories/` and `services/`.
 - Use `const` constructors wherever possible.
