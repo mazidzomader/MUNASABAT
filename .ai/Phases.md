@@ -114,16 +114,6 @@ The agent must build in this order. Do not start a phase until the previous one 
 
 ---
 
-## Phase 9 — Event Calendar
-**Goal:** Host (and optionally guest) can see events on a calendar view.
-**Scope:**
-- `table_calendar` integration, highlight dates with events
-- Tap date → show event details for that date
-
-**Exit criteria:** Calendar correctly highlights all of a host's event dates and shows correct details when a highlighted date is tapped.
-
----
-
 ## Phase 10 — Wedding Memories (Gallery)
 **Goal:** Post-event photo/video sharing with privacy controls.
 **Scope:**
@@ -132,16 +122,6 @@ The agent must build in this order. Do not start a phase until the previous one 
 - Privacy toggle: Public vs. Private (Guests Only), enforced via Firestore Security Rules
 
 **Exit criteria:** Host uploads media; a logged-in guest tied to that event can view, like, and comment; a random unauthenticated/unrelated user cannot view a Private gallery.
-
----
-
-## Phase 11 — User Profile
-**Goal:** Users can view/edit their profile and see their event history.
-**Scope:**
-- Profile screen: picture, name, phone, email (edit)
-- Hosted events list, Attended events list
-
-**Exit criteria:** User edits their profile picture/name and sees accurate hosted/attended event lists.
 
 ---
 
@@ -154,18 +134,6 @@ The agent must build in this order. Do not start a phase until the previous one 
 - Guest cap / storage cap / gallery quality logic in relevant features (Guests, Memories) reads this flag
 
 **Exit criteria:** Host completes a sandbox test purchase from the paywall, sees an immediate confirmation, and a previously-capped feature (e.g., guest list limit) is now unlocked without needing to restart the app.
-
----
-
-## Phase 13 — Polish & Hardening
-**Goal:** Production-readiness pass.
-**Scope:**
-- Firestore Security Rules audit against Rules.md §4 and §11 (payments)
-- Empty states, loading states, error states audited across all screens
-- App icon, splash screen, final theming pass per `Design.md`
-- Basic analytics-free crash reporting (Firebase Crashlytics) if approved
-
-**Exit criteria:** Full manual walkthrough of every user journey in `Architecture.md` §5 with no crashes and consistent empty/error/loading states.
 
 ---
 

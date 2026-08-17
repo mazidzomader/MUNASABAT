@@ -130,23 +130,11 @@
 
 - **Status:** Not Started
 
-### Phase 9 — Event Calendar
-
-- **Status:** Not Started
-
 ### Phase 10 — Wedding Memories (Gallery)
 
 - **Status:** Not Started
 
-### Phase 11 — User Profile
-
-- **Status:** Not Started
-
 ### Phase 12 — Premium Wedding Features (Sandbox Payments)
-
-- **Status:** Not Started
-
-### Phase 13 — Polish & Hardening
 
 - **Status:** Not Started
 
