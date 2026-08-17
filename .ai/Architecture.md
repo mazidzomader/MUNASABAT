@@ -140,6 +140,7 @@ users/{userId}
 events/{eventId}
   - hostId, title, date, venueName, venueLatLng, description, coverImageUrl
   - createdAt, privacy ("public" | "private")
+  - eventCode (unique 6-digit alphanumeric), qrToken (unique random string)
 
 events/{eventId}/checklist/{itemId}
   - title, isCompleted, createdAt
@@ -148,12 +149,8 @@ events/{eventId}/expenses/{expenseId}
   - label, category, amount, createdAt
 
 events/{eventId}/guests/{guestId}
-  - name, phone, email, status ("pending" | "accepted" | "declined" | "checked_in")
-  - invitationId, checkedInAt
-
-invitations/{invitationId}
-  - eventId, guestId, qrToken (unique, server-generated, non-sequential)
-  - createdAt
+  - name, phone, email, status ("pending" | "requested" | "accepted" | "declined" | "checked_in")
+  - checkedInAt
 
 events/{eventId}/memories/{memoryId}
   - type ("photo" | "video"), url, uploadedBy, createdAt
@@ -172,7 +169,7 @@ events/{eventId}/premium
     sslcommerzTranId, unlockedFeatures: [string]
 ```
 
-> `qrToken` must be generated server-side (Cloud Function) using a cryptographically random value — never a predictable ID like the guest's document ID or an incrementing number. See Rules.md §4.
+> `eventCode` and `qrToken` must be generated when the event is created. Guests use these to request to join an event instead of receiving individual invitation links.
 
 ## 5. App Flow (Primary User Journeys)
 
@@ -182,7 +179,7 @@ events/{eventId}/premium
 > Vendor discovery/directory has been removed from scope (see PRD.md) — it is not part of any user journey.
 
 **Guest journey:**
-`Receive invitation link/WhatsApp message → Guest Portal OTP Login → View Invitation → RSVP → View/Download QR → Optionally Send Wedding Gift (SSLCOMMERZ sandbox checkout) → (day of) Present QR at check-in → Browse Memories post-event`
+`Receive Event Code / QR → Join Event in App → Wait for Host Verification → View Event Details → Optionally Send Wedding Gift (SSLCOMMERZ sandbox checkout) → (day of) Present Personal Check-in QR → Browse Memories post-event`
 
 ## 6. Navigation Structure (go_router, high level)
 

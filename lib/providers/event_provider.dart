@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/event_model.dart';
 import '../repositories/event_repository.dart';
@@ -63,6 +64,8 @@ class EventController extends StateNotifier<AsyncValue<void>> {
         venueLatLng: venueLatLng,
         createdAt: DateTime.now(),
         privacy: 'private',
+        eventCode: _generateEventCode(),
+        qrToken: _generateQrToken(),
       );
 
       await _repository.createEvent(event);
@@ -93,5 +96,18 @@ class EventController extends StateNotifier<AsyncValue<void>> {
     } catch (e, st) {
       state = AsyncError(e, st);
     }
+  }
+
+  String _generateEventCode() {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    final rnd = Random.secure();
+    final code = String.fromCharCodes(Iterable.generate(6, (_) => chars.codeUnitAt(rnd.nextInt(chars.length))));
+    return 'MNSB-$code';
+  }
+
+  String _generateQrToken() {
+    const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    final rnd = Random.secure();
+    return String.fromCharCodes(Iterable.generate(32, (_) => chars.codeUnitAt(rnd.nextInt(chars.length))));
   }
 }

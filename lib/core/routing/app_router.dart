@@ -6,6 +6,10 @@ import 'package:go_router/go_router.dart';
 import '../../features/auth/auth_screen.dart';
 import '../../features/dashboard/dashboard_screen.dart';
 import '../../features/event/event_screen.dart';
+import '../../features/checklist/checklist_screen.dart';
+import '../../features/budget/budget_screen.dart';
+import '../../features/guest/guest_screen.dart';
+import '../../features/invitations/invitation_screen.dart';
 import 'package:latlong2/latlong.dart';
 import '../../providers/auth_provider.dart';
 
@@ -19,6 +23,10 @@ abstract class AppRoutes {
   static const createEvent = '/event/create';
   static const editEvent = '/event/:eventId/edit';
   static const eventDetail = '/event/:eventId';
+  static const eventChecklist = '/event/:eventId/checklist';
+  static const eventBudget = '/event/:eventId/budget';
+  static const eventGuests = '/event/:eventId/guests';
+  static const eventInvitation = '/event/:eventId/invitation';
   static const locationPicker = '/location-picker';
 }
 
@@ -100,6 +108,34 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (ctx, state) {
           final eventId = state.pathParameters['eventId']!;
           return EventDetailScreen(eventId: eventId);
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.eventChecklist,
+        builder: (ctx, state) {
+          final eventId = state.pathParameters['eventId']!;
+          return ChecklistScreen(eventId: eventId);
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.eventBudget,
+        builder: (ctx, state) {
+          final eventId = state.pathParameters['eventId']!;
+          return BudgetScreen(eventId: eventId);
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.eventGuests,
+        builder: (ctx, state) {
+          final eventId = state.pathParameters['eventId']!;
+          return GuestScreen(eventId: eventId);
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.eventInvitation,
+        builder: (ctx, state) {
+          final eventId = state.pathParameters['eventId']!;
+          return InvitationScreen(eventId: eventId);
         },
       ),
       GoRoute(

@@ -9,6 +9,29 @@ service cloud.firestore {
       allow read, write: if request.auth != null && request.auth.uid == userId;
     }
 
+    // ── events ─────────────────────────────────────────────────────────────
+    match /events/{eventId} {
+      // Allow the host to read/write their events. For MVP, we allow any auth user
+      // to read, as guests will need to view event details.
+      allow read: if request.auth != null;
+      allow write: if request.auth != null && (resource == null || resource.data.hostId == request.auth.uid || request.resource.data.hostId == request.auth.uid);
+      
+      // Checklist items belong to an event. Allow host to read/write.
+      match /checklist/{itemId} {
+        allow read, write: if request.auth != null; // For MVP, keeping it open to auth users
+      }
+      
+      // Expenses belong to an event. Allow host to read/write.
+      match /expenses/{expenseId} {
+        allow read, write: if request.auth != null; // For MVP, keeping it open to auth users
+      }
+      
+      // Guests belong to an event. Allow host to read/write.
+      match /guests/{guestId} {
+        allow read, write: if request.auth != null; // For MVP, keeping it open to auth users
+      }
+    }
+
     // ── Everything else — locked until subsequent phases open them ──────────
     // Each collection will be opened with proper rules as features are built.
     match /{document=**} {

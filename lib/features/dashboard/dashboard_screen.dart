@@ -8,6 +8,7 @@ import '../../core/theme/app_gradients.dart';
 import '../../core/theme/app_text_styles.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/event_provider.dart';
+import '../../providers/dashboard_stats_provider.dart';
 
 // =============================================================================
 // UNIFIED DASHBOARD SCREEN
@@ -38,10 +39,32 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
         userEmail: userEmail,
         ref: ref,
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => context.push('/event/create'),
-        backgroundColor: AppColors.brandInk,
-        child: const Icon(Icons.add, color: AppColors.surface),
+      floatingActionButton: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          FloatingActionButton.small(
+            heroTag: 'join_event',
+            onPressed: () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Join Event feature coming in Phase 6')),
+              );
+            },
+            backgroundColor: AppColors.surface,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+              side: const BorderSide(color: AppColors.brandInk, width: 1),
+            ),
+            child: const Icon(Icons.qr_code_scanner_rounded, color: AppColors.brandInk),
+          ),
+          const SizedBox(height: 12),
+          FloatingActionButton(
+            heroTag: 'create_event',
+            onPressed: () => context.push('/event/create'),
+            backgroundColor: AppColors.brandInk,
+            child: const Icon(Icons.add, color: AppColors.surface),
+          ),
+        ],
       ),
       body: DefaultTabController(
         length: 2,
@@ -185,6 +208,11 @@ class _AppDrawer extends StatelessWidget {
         iconColor: AppColors.statusAccepted,
         bgColor: Color(0xFFEEF7F2)),
     _DrawerItem(
+        icon: Icons.qr_code_rounded,
+        label: 'Invitations',
+        iconColor: AppColors.brandInk,
+        bgColor: Color(0xFFE8EAF6)),
+    _DrawerItem(
         icon: Icons.checklist_rounded,
         label: 'Items',
         iconColor: AppColors.brandInkLight,
@@ -298,7 +326,7 @@ class _DrawerHeader extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: AppColors.surface,
                     shape: BoxShape.circle,
-                    border: Border.all(color: AppColors.divider, width: 2),
+                    border: Border.all(color: AppColors.brandInk, width: 2),
                     boxShadow: [
                       BoxShadow(
                           color: AppColors.ink.withAlpha(15), blurRadius: 8)
@@ -366,10 +394,85 @@ class _DrawerTile extends ConsumerWidget {
       trailing: const Icon(Icons.chevron_right_rounded,
           color: AppColors.stone, size: 20),
       onTap: () {
-        Navigator.of(context).pop();
+        final router = GoRouter.of(context);
+        final navigator = Navigator.of(context);
+        final rootContext = navigator.context; // The navigator's context stays active
+        navigator.pop(); // close drawer
+
         if (item.label == 'Events') {
-          context.push('/events');
+          router.push('/events');
+        } else if (item.label == 'Guests') {
+          _showEventPicker(rootContext, ref, (eventId) {
+            GoRouter.of(rootContext).push('/event/$eventId/guests');
+          });
+        } else if (item.label == 'Items') {
+          _showEventPicker(rootContext, ref, (eventId) {
+            GoRouter.of(rootContext).push('/event/$eventId/checklist');
+          });
+        } else if (item.label == 'Budget') {
+          _showEventPicker(rootContext, ref, (eventId) {
+            GoRouter.of(rootContext).push('/event/$eventId/budget');
+          });
+        } else if (item.label == 'Invitations') {
+          _showEventPicker(rootContext, ref, (eventId) {
+            GoRouter.of(rootContext).push('/event/$eventId/invitation');
+          });
         }
+      },
+    );
+  }
+
+  void _showEventPicker(
+      BuildContext context, WidgetRef ref, Function(String) onEventSelected) {
+    final hostEvents = ref.read(hostEventsProvider).valueOrNull ?? [];
+    if (hostEvents.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('You need to create an event first.')),
+      );
+      return;
+    }
+    
+    // If only one event, just go directly
+    if (hostEvents.length == 1) {
+      onEventSelected(hostEvents.first.id);
+      return;
+    }
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: AppColors.surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (ctx) {
+        return SafeArea(
+          child: Container(
+            padding: const EdgeInsets.symmetric(vertical: 24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  child: Text(
+                    'Select Event',
+                    style: AppTextStyles.titleLarge.copyWith(color: AppColors.brandInk),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                ...hostEvents.map((e) => ListTile(
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 24),
+                      title: Text(e.title, style: AppTextStyles.titleMedium),
+                      subtitle: Text(DateFormat('MMM d, yyyy').format(e.date)),
+                      onTap: () {
+                        Navigator.pop(ctx);
+                        onEventSelected(e.id);
+                      },
+                    )),
+              ],
+            ),
+          ),
+        );
       },
     );
   }
@@ -470,7 +573,7 @@ class _HeaderButton extends StatelessWidget {
         decoration: BoxDecoration(
           color: AppColors.surface.withAlpha(200),
           shape: BoxShape.circle,
-          border: Border.all(color: AppColors.divider),
+          border: Border.all(color: AppColors.brandInk, width: 1),
         ),
         child: Icon(icon, color: color, size: 22),
       ),
@@ -490,6 +593,8 @@ class _StatsGrid extends ConsumerWidget {
     final attendingEventsCount =
         ref.watch(attendingEventsProvider).valueOrNull?.length ?? 0;
     final totalEvents = hostEventsCount + attendingEventsCount;
+    final stats = ref.watch(dashboardStatsProvider);
+    final formatCurrency = NumberFormat.simpleCurrency(decimalDigits: 0);
 
     return GridView.count(
       crossAxisCount: 2,
@@ -511,18 +616,18 @@ class _StatsGrid extends ConsumerWidget {
             icon: Icons.people_outline_rounded,
             iconColor: AppColors.accentPink,
             bgColor: Color(0xFFFFE4FA)),
-        const _StatCard(
+        _StatCard(
             label: 'Tasks Done',
-            value: '0%',
+            value: '${(stats.tasksDonePercent * 100).toInt()}%',
             icon: Icons.checklist_rounded,
             iconColor: AppColors.statusAccepted,
-            bgColor: Color(0xFFD9F0E4)),
-        const _StatCard(
+            bgColor: const Color(0xFFD9F0E4)),
+        _StatCard(
             label: 'Budget Used',
-            value: '৳0',
+            value: formatCurrency.format(stats.budgetUsed),
             icon: Icons.account_balance_wallet_outlined,
             iconColor: AppColors.statusPending,
-            bgColor: Color(0xFFFFF0CC)),
+            bgColor: const Color(0xFFFFF0CC)),
       ],
     );
   }
@@ -550,7 +655,7 @@ class _StatCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: bgColor,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.divider),
+        border: Border.all(color: AppColors.brandInk, width: 1),
         boxShadow: [
           BoxShadow(
             color: iconColor.withAlpha(40),
@@ -606,7 +711,7 @@ class _HostEventsList extends ConsumerWidget {
             decoration: BoxDecoration(
               color: AppColors.surface,
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: AppColors.divider),
+              border: Border.all(color: AppColors.brandInk, width: 1),
             ),
             child: const Center(
               child: Text(
@@ -630,7 +735,7 @@ class _HostEventsList extends ConsumerWidget {
                 decoration: BoxDecoration(
                   color: AppColors.surface,
                   borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: AppColors.divider),
+                  border: Border.all(color: AppColors.brandInk, width: 1),
                   boxShadow: [
                     BoxShadow(
                       color: AppColors.ink.withAlpha(10),
@@ -707,7 +812,7 @@ class _AttendingEventsList extends ConsumerWidget {
             decoration: BoxDecoration(
               color: AppColors.surface,
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: AppColors.divider),
+              border: Border.all(color: AppColors.brandInk, width: 1),
             ),
             child: const Center(
               child: Text(
@@ -731,7 +836,7 @@ class _AttendingEventsList extends ConsumerWidget {
                 decoration: BoxDecoration(
                   color: AppColors.surface,
                   borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: AppColors.divider),
+                  border: Border.all(color: AppColors.brandInk, width: 1),
                   boxShadow: [
                     BoxShadow(
                       color: AppColors.ink.withAlpha(10),
@@ -797,7 +902,7 @@ class _RecentActivity extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.divider),
+        border: Border.all(color: AppColors.brandInk, width: 1),
         boxShadow: [
           BoxShadow(
             color: AppColors.ink.withAlpha(10),

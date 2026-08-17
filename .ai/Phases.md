@@ -52,38 +52,41 @@ The agent must build in this order. Do not start a phase until the previous one 
 ---
 
 ## Phase 4 — Guest Management
-**Goal:** Host can build and manage a guest list.
+**Goal:** Host can build and manage a guest list, and verify incoming join requests.
 **Scope:**
 - Add guest manually (name, phone, email)
 - Guest list screen with search
 - Edit/remove guest
-- Invitation status field displayed (`Pending` initially)
+- **"Join Requests" section:** Host can view guests who have requested to join (status `requested`) and Approve or Reject them.
+- Invitation status field displayed (`Pending` initially for manual adds, `Accepted` for approved requests)
 - *(Contact import is a stretch item for this phase — only attempt after the manual flow is solid and confirmed working)*
 
-**Exit criteria:** Host adds, searches, edits, and removes guests; list reflects changes in real time.
+**Exit criteria:** Host adds, searches, edits, and removes guests. Host sees incoming join requests and can approve/reject them; list reflects changes in real time.
 
 ---
 
-## Phase 5 — Digital Invitations & QR Generation
-**Goal:** Every guest gets a unique digital invitation with a QR code.
+## Phase 5 — Event Sharing & Invitations
+**Goal:** The event is assigned a single global QR code and Event Code for sharing.
 **Scope:**
-- Cloud Function: generate unique, cryptographically random `qrToken` per guest+event, create `invitations/{invitationId}` doc
-- Invitation preview screen (event info, host name, date/time, venue, map link, QR code rendered via `qr_flutter`)
-- Share via WhatsApp (native share sheet), SMS, Copy Link
+- Event model generates and stores a unique `eventCode` and `qrToken` at creation.
+- Invitation screen displays the single Event QR code and Event Code.
+- "Share Card" UI that combines event info + QR + code for easy sharing via WhatsApp/SMS/Link.
+- We no longer generate unique QRs per guest.
 
-**Exit criteria:** Host taps "Send Invitation" for a guest, sees a generated invitation with a QR code, and can share it through the native share sheet.
+**Exit criteria:** Host opens the Invitation screen, sees the Event QR and Code, and can share it out.
 
 ---
 
-## Phase 6 — Attending Events (Unified Flow)
-**Goal:** Invited users can manage their received invitations from the dashboard.
+## Phase 6 — Attending Events & Joining
+**Goal:** Guests can request to join an event using the Event Code or QR.
 **Scope:**
-- View upcoming invitation(s) from the "Attending" tab on the dashboard
-- View event details, "Open in Google Maps"
-- RSVP (Accept/Decline) — writes back to `guests/{guestId}.status`
-- View own QR code, Download invitation (image/PDF)
+- Dashboard "Join Event" flow (enter code or scan event QR).
+- Joining creates a `guests/{guestId}` doc with status `requested`.
+- Once the host approves (Phase 4), the event appears in the "Attending" tab.
+- View event details, "Open in Google Maps".
+- Guest gets a personal check-in QR code generated once approved (if needed for Phase 7).
 
-**Exit criteria:** A user taps on an event they are invited to from the dashboard, sees their invitation, RSVPs, and downloads their QR invitation as an image or PDF.
+**Exit criteria:** User joins an event via code/QR, waits for host approval, and then sees the event details and their personal check-in QR.
 
 ---
 

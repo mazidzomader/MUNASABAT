@@ -8,9 +8,9 @@
 
 ## Project Status Snapshot
 
-- **Current phase:** Phase 3 — Checklist & Budget Tracker (Up Next)
-- **Last updated:** 2026-08-15
-- **Overall state:** Phase 2 complete. Dashboard stats partially wired. Full Event CRUD implemented with OpenStreetMap interactive location picker and Nominatim search.
+- **Current phase:** Phase 6 — Attending Events & Joining (Up Next)
+- **Last updated:** 2026-08-18
+- **Overall state:** Phase 5 complete. Guest Management and Event Sharing via single QR code implemented.
 
 ---
 
@@ -79,17 +79,46 @@
 
 ### Phase 3 — Checklist & Budget Tracker
 
-- **Status:** Not Started
+- **Status:** Done
+- **What was built:**
+  - **Checklist Manager:**
+    - Created `ChecklistRepository` and `ChecklistProvider` for per-event checklist items.
+    - Implemented `ChecklistScreen` with progress bar, add task functionality, toggle completion, and swipe-to-delete.
+    - Wired "Manage Checklist" navigation into `EventDetailScreen` and global dashboard sidebar drawer.
+  - **Budget Tracker:**
+    - Added `totalBudget` field to `EventModel`.
+    - Created `ExpenseRepository` and `ExpenseProvider`.
+    - Implemented `BudgetScreen` with Total Budget/Spent summary card, progress bar, category-based expense list, and bottom sheet to add expenses.
+    - Wired "Manage Budget" into `EventDetailScreen` and global dashboard sidebar drawer.
+  - **UI/UX Refinements:**
+    - Applied a global solid dark `brandInk` thin border to all cards, inputs, empty states, and list tiles across the entire project for a crisp, high-contrast aesthetic.
+    - Fixed a known Flutter bug where `ListTile` borders/backgrounds detach during swipe-to-dismiss by explicitly wrapping them in a `Material` widget inside `Dismissible`.
+- **Deviations from the plan:** None.
+- **Known issues / TODO:** None.
+- **Decisions made:** Kept Checklist and Budget Tracker inside event context rather than a global dashboard view. Used an event picker in the global drawer to route users properly. Standardized global borders to a solid `brandInk` color instead of the softer `divider` beige. Dashboard stats dynamically aggregate checklist/budget data across all hosted events via `dashboardStatsProvider`.
 
 ### Phase 4 — Guest Management
 
-- **Status:** Not Started
+- **Status:** Done
+- **What was built:**
+  - Implemented `GuestScreen` to manage the event guest list.
+  - Added manual guest entry (Name, Phone, Email).
+  - Added guest list search, edit, and swipe-to-delete functionality.
+  - **Join Requests:** Refactored UI to show incoming requests (guests with `requested` status) at the top of the list in a distinct visual block.
+  - Hosts can instantly **Approve** (changes status to `accepted` and moves to list) or **Reject** (deletes guest doc) join requests.
+  - Wired up Firestore Security Rules to secure the `guests` subcollection.
 
-### Phase 5 — Digital Invitations & QR Generation
+### Phase 5 — Event Sharing & Invitations
 
-- **Status:** Not Started
+- **Status:** Done
+- **What was built:**
+  - Updated `EventModel` to natively store `eventCode` and `qrToken`.
+  - Added logic in `EventProvider` to automatically generate a secure 6-character `eventCode` (e.g. MNSB-XXXXXX) when creating an event.
+  - Created `InvitationScreen` displaying a beautiful photocard with the event details and a dynamically generated QR Code (`qr_flutter`).
+  - Added native sharing capability (`share_plus`) to easily text/email the event code and details.
+  - Wired "Share Invitation" button into the Event Details screen and global Sidebar Drawer.
 
-### Phase 6 — Guest Portal (OTP-based)
+### Phase 6 — Attending Events & Joining
 
 - **Status:** Not Started
 
@@ -135,6 +164,7 @@
 | 2026-08-15 | Generalized Users (Host and Guest merged into single User role)                                       | Product owner requested unified experience where any user can both create and join events.                                |
 | 2026-08-15 | Switched from Google Maps API to OpenStreetMap (`flutter_map`)                                        | Google Maps API key required billing account. OpenStreetMap + Nominatim search achieved same goals completely free.       |
 | 2026-08-16 | 1 Dart file per feature module for all UI screens and subwidgets                                      | Project architecture requirement: consolidate screens within each feature into a single self-contained file.             |
+| 2026-08-17 | Replaced Individual QR/RSVP flow with a Global Event Code + Join Requests flow                      | Product owner simplified architecture: 1 unique QR/code per event. Guests scan to send a join request, Host manually approves. |
 
 ---
 

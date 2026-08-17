@@ -200,7 +200,7 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
                     decoration: BoxDecoration(
                       color: AppColors.surface,
                       borderRadius: BorderRadius.circular(10),
-                      border: Border.all(color: AppColors.divider),
+                      border: Border.all(color: AppColors.brandInk, width: 1),
                     ),
                     child: Row(
                       children: [
@@ -239,7 +239,7 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
                     decoration: BoxDecoration(
                       color: AppColors.surface,
                       borderRadius: BorderRadius.circular(10),
-                      border: Border.all(color: AppColors.divider),
+                      border: Border.all(color: AppColors.brandInk, width: 1),
                     ),
                     child: Row(
                       children: [
@@ -398,7 +398,9 @@ class _EditEventScreenState extends ConsumerState<EditEventScreen> {
       _selectedTime!.minute,
     );
 
-    final updatedEvent = existingEvent.copyWith(
+    final updatedEvent = EventModel(
+      id: existingEvent.id,
+      hostId: existingEvent.hostId,
       title: _titleController.text.trim(),
       date: finalDateTime,
       venueName: _venueNameController.text.trim(),
@@ -406,6 +408,10 @@ class _EditEventScreenState extends ConsumerState<EditEventScreen> {
       venueLatLng: _venueLatLng != null
           ? {'lat': _venueLatLng!.latitude, 'lng': _venueLatLng!.longitude}
           : null,
+      coverImageUrl: existingEvent.coverImageUrl,
+      totalBudget: existingEvent.totalBudget,
+      createdAt: existingEvent.createdAt,
+      privacy: existingEvent.privacy,
     );
 
     await ref.read(eventControllerProvider.notifier).updateEvent(updatedEvent);
@@ -489,7 +495,7 @@ class _EditEventScreenState extends ConsumerState<EditEventScreen> {
                         decoration: BoxDecoration(
                           color: AppColors.surface,
                           borderRadius: BorderRadius.circular(10),
-                          border: Border.all(color: AppColors.divider),
+                          border: Border.all(color: AppColors.brandInk, width: 1),
                         ),
                         child: Row(
                           children: [
@@ -525,23 +531,37 @@ class _EditEventScreenState extends ConsumerState<EditEventScreen> {
                         decoration: BoxDecoration(
                           color: AppColors.surface,
                           borderRadius: BorderRadius.circular(10),
-                          border: Border.all(color: AppColors.divider),
+                          border: Border.all(color: AppColors.brandInk, width: 1),
                         ),
                         child: Row(
                           children: [
                             const Icon(Icons.location_on_outlined,
                                 color: AppColors.brandInk, size: 22),
                             const SizedBox(width: 12),
-                            Text(
-                              _venueLatLng != null
-                                  ? 'Location Selected'
-                                  : 'Pick Location on Map (Optional)',
-                              style: AppTextStyles.bodyLarge.copyWith(
-                                color: _venueLatLng == null
-                                    ? AppColors.stone
-                                    : AppColors.statusAccepted,
+                            Expanded(
+                              child: Text(
+                                _venueLatLng != null
+                                    ? 'Location Selected'
+                                    : 'Pick Location on Map (Optional)',
+                                style: AppTextStyles.bodyLarge.copyWith(
+                                  color: _venueLatLng == null
+                                      ? AppColors.stone
+                                      : AppColors.statusAccepted,
+                                ),
                               ),
                             ),
+                            if (_venueLatLng != null)
+                              IconButton(
+                                padding: EdgeInsets.zero,
+                                constraints: const BoxConstraints(),
+                                icon: const Icon(Icons.close_rounded,
+                                    color: AppColors.stone, size: 20),
+                                onPressed: () {
+                                  setState(() {
+                                    _venueLatLng = null;
+                                  });
+                                },
+                              ),
                           ],
                         ),
                       ),
@@ -671,13 +691,20 @@ class EventDetailScreen extends ConsumerWidget {
                       icon: Icons.location_on_rounded,
                       text: event.venueName,
                     ),
+                    if (event.eventCode != null) ...[
+                      const SizedBox(height: 16),
+                      _InfoRow(
+                        icon: Icons.qr_code_rounded,
+                        text: 'Event Code: ${event.eventCode}',
+                      ),
+                    ],
                     if (event.venueLatLng != null) ...[
                       const SizedBox(height: 16),
                       Container(
                         height: 200,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: AppColors.divider),
+                          border: Border.all(color: AppColors.brandInk, width: 1),
                         ),
                         clipBehavior: Clip.antiAlias,
                         child: FlutterMap(
@@ -754,6 +781,35 @@ class EventDetailScreen extends ConsumerWidget {
                             .copyWith(color: AppColors.charcoal),
                       ),
                     ],
+                    const SizedBox(height: 40),
+                    PrimaryButton(
+                      label: 'Manage Checklist',
+                      onPressed: () {
+                        context.push('/event/${event.id}/checklist');
+                      },
+                    ),
+                    const SizedBox(height: 12),
+                    PrimaryButton(
+                      label: 'Manage Budget',
+                      onPressed: () {
+                        context.push('/event/${event.id}/budget');
+                      },
+                    ),
+                    const SizedBox(height: 12),
+                    PrimaryButton(
+                      label: 'Manage Guests',
+                      onPressed: () {
+                        context.push('/event/${event.id}/guests');
+                      },
+                    ),
+                    const SizedBox(height: 12),
+                    PrimaryButton(
+                      label: 'Share Invitation',
+                      onPressed: () {
+                        context.push('/event/${event.id}/invitation');
+                      },
+                    ),
+                    const SizedBox(height: 24),
                   ]),
                 ),
               ),
@@ -866,7 +922,7 @@ class EventListScreen extends ConsumerWidget {
                   decoration: BoxDecoration(
                     color: AppColors.surface,
                     borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: AppColors.divider),
+                    border: Border.all(color: AppColors.brandInk, width: 1),
                     boxShadow: [
                       BoxShadow(
                         color: AppColors.ink.withAlpha(10),
