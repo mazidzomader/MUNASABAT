@@ -10,7 +10,7 @@
 
 ### Smart Wedding Planning & Guest Management Platform
 
-*Munasabat* is a Flutter-based wedding planning and guest management application designed to simplify every stage of organizing a wedding. From event planning and guest invitations to QR-based check-in and wedding memories, the platform provides an all-in-one digital solution for hosts, guests, and administrators.
+_Munasabat_ is a Flutter-based wedding planning and guest management application designed to simplify every stage of organizing a wedding. From event planning and guest invitations to QR-based check-in and wedding memories, the platform provides an all-in-one digital solution for hosts, guests, and administrators.
 
 </div>
 
@@ -40,12 +40,15 @@
 This guide covers how to set up the Munasabat project on your local machine, including setting up your own Firebase backend.
 
 ### 1. Prerequisites
+
 - **Flutter SDK** installed (run `flutter doctor` to ensure everything is set up).
 - **Firebase CLI** installed (`npm install -g firebase-tools`).
 - **FlutterFire CLI** installed (`dart pub global activate flutterfire_cli`).
 
 ### 2. Initial Setup
+
 Clone the repository and install all Flutter dependencies:
+
 ```bash
 git clone <your-repo-url>
 cd munasabat
@@ -53,6 +56,7 @@ flutter pub get
 ```
 
 ### 3. Firebase Configuration
+
 Since the app relies heavily on Firebase (Auth, Firestore), you need to connect it to your own Firebase project:
 
 1. **Create a Project:** Go to the [Firebase Console](https://console.firebase.google.com/) and create a new project (e.g., `munasabat-dev`).
@@ -77,7 +81,9 @@ Since the app relies heavily on Firebase (Auth, Firestore), you need to connect 
    Select the Firebase project you just created, and choose the platforms (Android, Web). This will automatically generate the `lib/firebase_options.dart` file and configure `android/app/google-services.json`.
 
 ### 4. Android Fingerprints (Required for Auth)
+
 If you are testing on Android, you must provide your SHA-1 and SHA-256 fingerprints to Firebase:
+
 1. Generate the keys by running:
    ```bash
    cd android
@@ -87,14 +93,17 @@ If you are testing on Android, you must provide your SHA-1 and SHA-256 fingerpri
 3. Go back to Firebase Console -> **Project Settings** -> select the Android app at the bottom -> Add Fingerprints.
 
 ### 5. Run the App
+
 Once everything is configured, you can launch the app:
+
 ```bash
 flutter run
 ```
-*(You can select Chrome for web testing, or an Android Emulator/Physical Device).*
 
+_(You can select Chrome for web testing, or an Android Emulator/Physical Device)._
 
 ## License
+
 <p align="center">
 Licensed under the MIT License, Copyright © 2026-present.
 </p>

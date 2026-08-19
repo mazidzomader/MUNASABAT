@@ -9,6 +9,7 @@ import '../../models/event_model.dart';
 import '../../models/guest_model.dart';
 import '../../providers/event_provider.dart';
 import '../../providers/guest_provider.dart';
+import '../../repositories/premium_repository.dart';
 
 class GuestScreen extends ConsumerStatefulWidget {
   const GuestScreen({super.key, required this.eventId});
@@ -76,18 +77,53 @@ class _GuestScreenState extends ConsumerState<GuestScreen> {
           error: (err, _) => Center(child: Text('Error: $err')),
         ),
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => _showGuestModal(context, ref, isEdit: false),
-        backgroundColor: AppColors.brandInk,
-        icon: const Icon(Icons.person_add_alt_1_rounded, color: AppColors.surface),
-        label: Text('Add Guest', style: AppTextStyles.button.copyWith(color: AppColors.surface)),
-      ),
+      floatingActionButton: Consumer(builder: (context, ref, _) {
+        final guests = ref.watch(guestsProvider(widget.eventId)).valueOrNull ?? [];
+        final premiumStatus = ref.watch(eventPremiumProvider(widget.eventId)).valueOrNull;
+        final hasUnlimited = premiumStatus?.unlockedFeatures.contains('unlimited_guests') ?? false;
+        
+        final isLimitReached = !hasUnlimited && guests.length >= 20;
+
+        return FloatingActionButton.extended(
+          onPressed: isLimitReached ? () {
+            context.push('/event/${widget.eventId}/premium');
+          } : () => _showGuestModal(context, ref, isEdit: false),
+          backgroundColor: isLimitReached ? AppColors.stone : AppColors.brandInk,
+          icon: Icon(isLimitReached ? Icons.lock_rounded : Icons.person_add_alt_1_rounded, color: AppColors.surface),
+          label: Text(isLimitReached ? 'Upgrade to Add' : 'Add Guest', style: AppTextStyles.button.copyWith(color: AppColors.surface)),
+        );
+      }),
     );
   }
 
   Widget _buildBody(BuildContext context, EventModel event, List<GuestModel> requests, List<GuestModel> others, int totalGuests) {
+    final premiumStatus = ref.watch(eventPremiumProvider(widget.eventId)).valueOrNull;
+    final hasUnlimited = premiumStatus?.unlockedFeatures.contains('unlimited_guests') ?? false;
+    final isLimitReached = !hasUnlimited && totalGuests >= 20;
+
     return Column(
       children: [
+        if (isLimitReached)
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            color: AppColors.statusDeclined.withAlpha(20),
+            child: Row(
+              children: [
+                const Icon(Icons.info_outline_rounded, color: AppColors.statusDeclined),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    'Guest limit reached (20/20). Upgrade to Premium to invite unlimited guests.',
+                    style: AppTextStyles.bodyMedium.copyWith(color: AppColors.statusDeclined),
+                  ),
+                ),
+                TextButton(
+                  onPressed: () => context.push('/event/${widget.eventId}/premium'),
+                  child: const Text('UPGRADE', style: TextStyle(color: AppColors.statusDeclined, fontWeight: FontWeight.bold)),
+                ),
+              ],
+            ),
+          ),
         _buildSummaryAndSearch(totalGuests),
         Expanded(
           child: (requests.isEmpty && others.isEmpty)
@@ -294,18 +330,42 @@ class _GuestScreenState extends ConsumerState<GuestScreen> {
                 Text(guest.email!, style: AppTextStyles.bodyMedium.copyWith(color: AppColors.stone)),
             ],
           ),
-          trailing: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-            decoration: BoxDecoration(
-              color: statusColor.withAlpha(20),
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: statusColor, width: 1),
-            ),
-            child: Text(
-              statusLabel,
-              style: AppTextStyles.labelSmall.copyWith(color: statusColor),
-            ),
-          ),
+          trailing: guest.status == 'accepted'
+              ? ElevatedButton(
+                  onPressed: () {
+                    final updated = GuestModel(
+                      id: guest.id,
+                      name: guest.name,
+                      phone: guest.phone,
+                      email: guest.email,
+                      status: 'checked_in',
+                      invitationId: guest.invitationId,
+                      checkedInAt: DateTime.now(),
+                    );
+                    ref.read(guestControllerProvider(widget.eventId).notifier).updateGuest(updated);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.brandInk,
+                    foregroundColor: AppColors.surface,
+                    elevation: 0,
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
+                    minimumSize: const Size(0, 36),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                  ),
+                  child: Text('Check In', style: AppTextStyles.labelSmall.copyWith(color: AppColors.surface)),
+                )
+              : Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: statusColor.withAlpha(20),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: statusColor, width: 1),
+                  ),
+                  child: Text(
+                    statusLabel,
+                    style: AppTextStyles.labelSmall.copyWith(color: statusColor),
+                  ),
+                ),
         ),
       ),
     );

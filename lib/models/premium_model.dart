@@ -3,16 +3,18 @@ class PremiumModel {
   final bool isPremium;
   final String? plan; // "unlimited_guests" | "extra_storage" | "hd_gallery" | "bundle"
   final DateTime? purchasedAt;
-  final String? sslcommerzTranId;
+  final String? stripePaymentIntentId;
   final List<String> unlockedFeatures;
+  final int imageLimit;
 
   const PremiumModel({
     required this.eventId,
     this.isPremium = false,
     this.plan,
     this.purchasedAt,
-    this.sslcommerzTranId,
+    this.stripePaymentIntentId,
     this.unlockedFeatures = const [],
+    this.imageLimit = 5,
   });
 
   factory PremiumModel.fromMap(Map<String, dynamic> map, String documentId) {
@@ -24,8 +26,9 @@ class PremiumModel {
           ? DateTime.fromMillisecondsSinceEpoch(
               map['purchasedAt'].millisecondsSinceEpoch)
           : null,
-      sslcommerzTranId: map['sslcommerzTranId'] as String?,
+      stripePaymentIntentId: map['stripePaymentIntentId'] as String?,
       unlockedFeatures: List<String>.from(map['unlockedFeatures'] ?? []),
+      imageLimit: map['imageLimit'] as int? ?? 5,
     );
   }
 
@@ -34,8 +37,9 @@ class PremiumModel {
       'isPremium': isPremium,
       'plan': plan,
       'purchasedAt': purchasedAt,
-      'sslcommerzTranId': sslcommerzTranId,
+      'stripePaymentIntentId': stripePaymentIntentId,
       'unlockedFeatures': unlockedFeatures,
+      'imageLimit': imageLimit,
     };
   }
 }

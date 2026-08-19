@@ -96,8 +96,10 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
   }
 
   Future<void> _pickLocation() async {
-    final result =
-        await context.push<LatLng?>('/location-picker', extra: _venueLatLng);
+    final result = await context.push<LatLng?>(
+      '/location-picker',
+      extra: _venueLatLng,
+    );
     if (result != null && mounted) {
       setState(() {
         _venueLatLng = result;
@@ -120,7 +122,9 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
       _selectedTime!.minute,
     );
 
-    await ref.read(eventControllerProvider.notifier).createEvent(
+    await ref
+        .read(eventControllerProvider.notifier)
+        .createEvent(
           title: _titleController.text.trim(),
           date: finalDateTime,
           venueName: _venueNameController.text.trim(),
@@ -235,7 +239,9 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
                   onTap: _pickLocation,
                   child: Container(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 16, vertical: 16),
+                      horizontal: 16,
+                      vertical: 16,
+                    ),
                     decoration: BoxDecoration(
                       color: AppColors.surface,
                       borderRadius: BorderRadius.circular(10),
@@ -243,8 +249,11 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
                     ),
                     child: Row(
                       children: [
-                        const Icon(Icons.location_on_outlined,
-                            color: AppColors.brandInk, size: 22),
+                        const Icon(
+                          Icons.location_on_outlined,
+                          color: AppColors.brandInk,
+                          size: 22,
+                        ),
                         const SizedBox(width: 12),
                         Text(
                           _venueLatLng != null
@@ -319,8 +328,10 @@ class _EditEventScreenState extends ConsumerState<EditEventScreen> {
     _selectedDate = event.date;
     _selectedTime = TimeOfDay.fromDateTime(event.date);
     if (event.venueLatLng != null) {
-      _venueLatLng =
-          LatLng(event.venueLatLng!['lat']!, event.venueLatLng!['lng']!);
+      _venueLatLng = LatLng(
+        event.venueLatLng!['lat']!,
+        event.venueLatLng!['lng']!,
+      );
     }
     _isInitialized = true;
   }
@@ -374,8 +385,10 @@ class _EditEventScreenState extends ConsumerState<EditEventScreen> {
   }
 
   Future<void> _pickLocation() async {
-    final result =
-        await context.push<LatLng?>('/location-picker', extra: _venueLatLng);
+    final result = await context.push<LatLng?>(
+      '/location-picker',
+      extra: _venueLatLng,
+    );
     if (result != null && mounted) {
       setState(() {
         _venueLatLng = result;
@@ -455,14 +468,17 @@ class _EditEventScreenState extends ConsumerState<EditEventScreen> {
               backgroundColor: AppColors.cream,
               elevation: 0,
               leading: IconButton(
-                icon: const Icon(Icons.arrow_back_rounded,
-                    color: AppColors.brandInk),
+                icon: const Icon(
+                  Icons.arrow_back_rounded,
+                  color: AppColors.brandInk,
+                ),
                 onPressed: () => context.pop(),
               ),
               title: Text(
                 'Edit Event',
-                style:
-                    AppTextStyles.titleLarge.copyWith(color: AppColors.brandInk),
+                style: AppTextStyles.titleLarge.copyWith(
+                  color: AppColors.brandInk,
+                ),
               ),
               centerTitle: true,
             ),
@@ -475,8 +491,9 @@ class _EditEventScreenState extends ConsumerState<EditEventScreen> {
                   children: [
                     Text(
                       'Update event details',
-                      style: AppTextStyles.headlineMedium
-                          .copyWith(color: AppColors.brandInk),
+                      style: AppTextStyles.headlineMedium.copyWith(
+                        color: AppColors.brandInk,
+                      ),
                     ),
                     const SizedBox(height: 24),
                     AppTextField(
@@ -491,16 +508,24 @@ class _EditEventScreenState extends ConsumerState<EditEventScreen> {
                       onTap: _pickDateTime,
                       child: Container(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 16),
+                          horizontal: 16,
+                          vertical: 16,
+                        ),
                         decoration: BoxDecoration(
                           color: AppColors.surface,
                           borderRadius: BorderRadius.circular(10),
-                          border: Border.all(color: AppColors.brandInk, width: 1),
+                          border: Border.all(
+                            color: AppColors.brandInk,
+                            width: 1,
+                          ),
                         ),
                         child: Row(
                           children: [
-                            const Icon(Icons.calendar_month_outlined,
-                                color: AppColors.brandInk, size: 22),
+                            const Icon(
+                              Icons.calendar_month_outlined,
+                              color: AppColors.brandInk,
+                              size: 22,
+                            ),
                             const SizedBox(width: 12),
                             Text(
                               displayDate,
@@ -527,16 +552,24 @@ class _EditEventScreenState extends ConsumerState<EditEventScreen> {
                       onTap: _pickLocation,
                       child: Container(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 16),
+                          horizontal: 16,
+                          vertical: 16,
+                        ),
                         decoration: BoxDecoration(
                           color: AppColors.surface,
                           borderRadius: BorderRadius.circular(10),
-                          border: Border.all(color: AppColors.brandInk, width: 1),
+                          border: Border.all(
+                            color: AppColors.brandInk,
+                            width: 1,
+                          ),
                         ),
                         child: Row(
                           children: [
-                            const Icon(Icons.location_on_outlined,
-                                color: AppColors.brandInk, size: 22),
+                            const Icon(
+                              Icons.location_on_outlined,
+                              color: AppColors.brandInk,
+                              size: 22,
+                            ),
                             const SizedBox(width: 12),
                             Expanded(
                               child: Text(
@@ -554,8 +587,11 @@ class _EditEventScreenState extends ConsumerState<EditEventScreen> {
                               IconButton(
                                 padding: EdgeInsets.zero,
                                 constraints: const BoxConstraints(),
-                                icon: const Icon(Icons.close_rounded,
-                                    color: AppColors.stone, size: 20),
+                                icon: const Icon(
+                                  Icons.close_rounded,
+                                  color: AppColors.stone,
+                                  size: 20,
+                                ),
                                 onPressed: () {
                                   setState(() {
                                     _venueLatLng = null;
@@ -575,8 +611,9 @@ class _EditEventScreenState extends ConsumerState<EditEventScreen> {
                     ),
                     const SizedBox(height: 32),
                     PrimaryButton(
-                        label: 'Update Event',
-                        onPressed: () => _submit(event)),
+                      label: 'Update Event',
+                      onPressed: () => _submit(event),
+                    ),
                     const SizedBox(height: 40),
                   ],
                 ),
@@ -616,8 +653,9 @@ class EventDetailScreen extends ConsumerWidget {
             );
           }
 
-          final displayDate =
-              DateFormat('EEEE, MMMM d, yyyy \n h:mm a').format(event.date);
+          final displayDate = DateFormat(
+            'EEEE, MMMM d, yyyy \n h:mm a',
+          ).format(event.date);
 
           return CustomScrollView(
             slivers: [
@@ -629,22 +667,27 @@ class EventDetailScreen extends ConsumerWidget {
                 iconTheme: const IconThemeData(color: AppColors.brandInk),
                 actions: [
                   IconButton(
-                    icon: const Icon(Icons.edit_rounded,
-                        color: AppColors.brandInk),
+                    icon: const Icon(
+                      Icons.edit_rounded,
+                      color: AppColors.brandInk,
+                    ),
                     onPressed: () {
                       context.push('/event/${event.id}/edit');
                     },
                   ),
                   IconButton(
-                    icon: const Icon(Icons.delete_outline_rounded,
-                        color: AppColors.statusDeclined),
+                    icon: const Icon(
+                      Icons.delete_outline_rounded,
+                      color: AppColors.statusDeclined,
+                    ),
                     onPressed: () async {
                       final confirmed = await showDialog<bool>(
                         context: context,
                         builder: (ctx) => AlertDialog(
                           title: const Text('Delete Event'),
                           content: const Text(
-                              'Are you sure you want to delete this event? This action cannot be undone.'),
+                            'Are you sure you want to delete this event? This action cannot be undone.',
+                          ),
                           actions: [
                             TextButton(
                               onPressed: () => ctx.pop(false),
@@ -652,9 +695,12 @@ class EventDetailScreen extends ConsumerWidget {
                             ),
                             TextButton(
                               onPressed: () => ctx.pop(true),
-                              child: const Text('Delete',
-                                  style: TextStyle(
-                                      color: AppColors.statusDeclined)),
+                              child: const Text(
+                                'Delete',
+                                style: TextStyle(
+                                  color: AppColors.statusDeclined,
+                                ),
+                              ),
                             ),
                           ],
                         ),
@@ -678,8 +724,9 @@ class EventDetailScreen extends ConsumerWidget {
                   delegate: SliverChildListDelegate([
                     Text(
                       event.title,
-                      style: AppTextStyles.displayLarge
-                          .copyWith(color: AppColors.brandInk),
+                      style: AppTextStyles.displayLarge.copyWith(
+                        color: AppColors.brandInk,
+                      ),
                     ),
                     const SizedBox(height: 24),
                     _InfoRow(
@@ -704,13 +751,18 @@ class EventDetailScreen extends ConsumerWidget {
                         height: 200,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: AppColors.brandInk, width: 1),
+                          border: Border.all(
+                            color: AppColors.brandInk,
+                            width: 1,
+                          ),
                         ),
                         clipBehavior: Clip.antiAlias,
                         child: FlutterMap(
                           options: MapOptions(
-                            initialCenter: LatLng(event.venueLatLng!['lat']!,
-                                event.venueLatLng!['lng']!),
+                            initialCenter: LatLng(
+                              event.venueLatLng!['lat']!,
+                              event.venueLatLng!['lng']!,
+                            ),
                             initialZoom: 14,
                             interactionOptions: const InteractionOptions(
                               flags: InteractiveFlag.none,
@@ -725,8 +777,10 @@ class EventDetailScreen extends ConsumerWidget {
                             MarkerLayer(
                               markers: [
                                 Marker(
-                                  point: LatLng(event.venueLatLng!['lat']!,
-                                      event.venueLatLng!['lng']!),
+                                  point: LatLng(
+                                    event.venueLatLng!['lat']!,
+                                    event.venueLatLng!['lng']!,
+                                  ),
                                   width: 40,
                                   height: 40,
                                   child: const Icon(
@@ -748,15 +802,19 @@ class EventDetailScreen extends ConsumerWidget {
                             final lat = event.venueLatLng!['lat'];
                             final lng = event.venueLatLng!['lng'];
                             final url = Uri.parse(
-                                'https://www.google.com/maps/search/?api=1&query=$lat,$lng');
+                              'https://www.google.com/maps/search/?api=1&query=$lat,$lng',
+                            );
                             if (await canLaunchUrl(url)) {
                               await launchUrl(url);
                             }
                           },
                           child: Row(
                             children: [
-                              const Icon(Icons.map_rounded,
-                                  size: 16, color: AppColors.accentBlue),
+                              const Icon(
+                                Icons.map_rounded,
+                                size: 16,
+                                color: AppColors.accentBlue,
+                              ),
                               const SizedBox(width: 6),
                               Text(
                                 'Open in Maps',
@@ -772,13 +830,13 @@ class EventDetailScreen extends ConsumerWidget {
                     if (event.description != null &&
                         event.description!.isNotEmpty) ...[
                       const SizedBox(height: 32),
-                      Text('About this event',
-                          style: AppTextStyles.titleLarge),
+                      Text('About this event', style: AppTextStyles.titleLarge),
                       const SizedBox(height: 12),
                       Text(
                         event.description!,
-                        style: AppTextStyles.bodyLarge
-                            .copyWith(color: AppColors.charcoal),
+                        style: AppTextStyles.bodyLarge.copyWith(
+                          color: AppColors.charcoal,
+                        ),
                       ),
                     ],
                     const SizedBox(height: 40),
@@ -809,6 +867,20 @@ class EventDetailScreen extends ConsumerWidget {
                         context.push('/event/${event.id}/invitation');
                       },
                     ),
+                    const SizedBox(height: 12),
+                    PrimaryButton(
+                      label: 'Gift Wallet',
+                      onPressed: () {
+                        context.push('/event/${event.id}/gifts/wallet');
+                      },
+                    ),
+                    const SizedBox(height: 12),
+                    PrimaryButton(
+                      label: 'Event Gallery',
+                      onPressed: () {
+                        context.push('/event/${event.id}/memories');
+                      },
+                    ),
                     const SizedBox(height: 24),
                   ]),
                 ),
@@ -817,10 +889,13 @@ class EventDetailScreen extends ConsumerWidget {
           );
         },
         loading: () => const Center(
-            child: CircularProgressIndicator(color: AppColors.brandInk)),
+          child: CircularProgressIndicator(color: AppColors.brandInk),
+        ),
         error: (err, _) => Center(
-          child: Text('Error loading event: $err',
-              style: AppTextStyles.bodyMedium),
+          child: Text(
+            'Error loading event: $err',
+            style: AppTextStyles.bodyMedium,
+          ),
         ),
       ),
     );
@@ -871,8 +946,9 @@ class EventListScreen extends ConsumerWidget {
         iconTheme: const IconThemeData(color: AppColors.brandInk),
         title: Text(
           'Your Events',
-          style:
-              AppTextStyles.headlineMedium.copyWith(color: AppColors.brandInk),
+          style: AppTextStyles.headlineMedium.copyWith(
+            color: AppColors.brandInk,
+          ),
         ),
       ),
       floatingActionButton: FloatingActionButton(
@@ -889,19 +965,24 @@ class EventListScreen extends ConsumerWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(Icons.event_busy_rounded,
-                        size: 64, color: AppColors.stone),
+                    const Icon(
+                      Icons.event_busy_rounded,
+                      size: 64,
+                      color: AppColors.stone,
+                    ),
                     const SizedBox(height: 16),
                     Text(
                       'No events found',
-                      style: AppTextStyles.titleLarge
-                          .copyWith(color: AppColors.brandInk),
+                      style: AppTextStyles.titleLarge.copyWith(
+                        color: AppColors.brandInk,
+                      ),
                     ),
                     const SizedBox(height: 8),
                     Text(
                       'Tap the + button to create your first event.',
-                      style: AppTextStyles.bodyMedium
-                          .copyWith(color: AppColors.charcoal),
+                      style: AppTextStyles.bodyMedium.copyWith(
+                        color: AppColors.charcoal,
+                      ),
                       textAlign: TextAlign.center,
                     ),
                   ],
@@ -939,23 +1020,29 @@ class EventListScreen extends ConsumerWidget {
                       children: [
                         Text(
                           event.title,
-                          style: AppTextStyles.titleLarge
-                              .copyWith(color: AppColors.brandInk),
+                          style: AppTextStyles.titleLarge.copyWith(
+                            color: AppColors.brandInk,
+                          ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
                         const SizedBox(height: 12),
                         Row(
                           children: [
-                            const Icon(Icons.calendar_today_rounded,
-                                size: 16, color: AppColors.accentBlue),
+                            const Icon(
+                              Icons.calendar_today_rounded,
+                              size: 16,
+                              color: AppColors.accentBlue,
+                            ),
                             const SizedBox(width: 8),
                             Expanded(
                               child: Text(
-                                DateFormat('MMMM d, yyyy • h:mm a')
-                                    .format(event.date),
-                                style: AppTextStyles.bodyLarge
-                                    .copyWith(color: AppColors.charcoal),
+                                DateFormat(
+                                  'MMMM d, yyyy • h:mm a',
+                                ).format(event.date),
+                                style: AppTextStyles.bodyLarge.copyWith(
+                                  color: AppColors.charcoal,
+                                ),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                               ),
@@ -971,7 +1058,8 @@ class EventListScreen extends ConsumerWidget {
           );
         },
         loading: () => const Center(
-            child: CircularProgressIndicator(color: AppColors.brandInk)),
+          child: CircularProgressIndicator(color: AppColors.brandInk),
+        ),
         error: (err, _) => Center(child: Text('Error loading events: $err')),
       ),
     );
@@ -984,10 +1072,7 @@ class EventListScreen extends ConsumerWidget {
 
 /// Interactive OpenStreetMap picker with Nominatim venue search.
 class LocationPickerScreen extends StatefulWidget {
-  const LocationPickerScreen({
-    super.key,
-    this.initialLocation,
-  });
+  const LocationPickerScreen({super.key, this.initialLocation});
 
   final LatLng? initialLocation;
 
@@ -1036,9 +1121,12 @@ class _LocationPickerScreenState extends State<LocationPickerScreen> {
     setState(() => _isSearching = true);
     try {
       final url = Uri.parse(
-          'https://nominatim.openstreetmap.org/search?q=$query&format=json&limit=5');
-      final response = await http
-          .get(url, headers: {'User-Agent': 'com.example.munasabat'});
+        'https://nominatim.openstreetmap.org/search?q=$query&format=json&limit=5',
+      );
+      final response = await http.get(
+        url,
+        headers: {'User-Agent': 'com.example.munasabat'},
+      );
       if (response.statusCode == 200) {
         setState(() {
           _searchResults = json.decode(response.body);
@@ -1143,8 +1231,10 @@ class _LocationPickerScreenState extends State<LocationPickerScreen> {
                     decoration: InputDecoration(
                       hintText: 'Search for a place...',
                       hintStyle: AppTextStyles.hint,
-                      prefixIcon:
-                          const Icon(Icons.search, color: AppColors.stone),
+                      prefixIcon: const Icon(
+                        Icons.search,
+                        color: AppColors.stone,
+                      ),
                       suffixIcon: _isSearching
                           ? const Padding(
                               padding: EdgeInsets.all(12),
@@ -1152,23 +1242,28 @@ class _LocationPickerScreenState extends State<LocationPickerScreen> {
                                 width: 16,
                                 height: 16,
                                 child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                    color: AppColors.brandInk),
+                                  strokeWidth: 2,
+                                  color: AppColors.brandInk,
+                                ),
                               ),
                             )
                           : _searchController.text.isNotEmpty
-                              ? IconButton(
-                                  icon: const Icon(Icons.close,
-                                      color: AppColors.stone),
-                                  onPressed: () {
-                                    _searchController.clear();
-                                    _onSearchChanged('');
-                                  },
-                                )
-                              : null,
+                          ? IconButton(
+                              icon: const Icon(
+                                Icons.close,
+                                color: AppColors.stone,
+                              ),
+                              onPressed: () {
+                                _searchController.clear();
+                                _onSearchChanged('');
+                              },
+                            )
+                          : null,
                       border: InputBorder.none,
                       contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 14),
+                        horizontal: 16,
+                        vertical: 14,
+                      ),
                     ),
                   ),
                 ),
@@ -1201,8 +1296,10 @@ class _LocationPickerScreenState extends State<LocationPickerScreen> {
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                           ),
-                          leading: const Icon(Icons.location_on_outlined,
-                              color: AppColors.stone),
+                          leading: const Icon(
+                            Icons.location_on_outlined,
+                            color: AppColors.stone,
+                          ),
                           onTap: () => _onResultTapped(result),
                         );
                       },

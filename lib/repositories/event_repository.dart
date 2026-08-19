@@ -80,4 +80,16 @@ class EventRepository {
 
     await batch.commit();
   }
+
+  Future<EventModel?> getEventByCode(String code) async {
+    final query = await _firestore
+        .collection('events')
+        .where('eventCode', isEqualTo: code)
+        .limit(1)
+        .get();
+
+    if (query.docs.isEmpty) return null;
+    final doc = query.docs.first;
+    return EventModel.fromMap(doc.data(), doc.id);
+  }
 }

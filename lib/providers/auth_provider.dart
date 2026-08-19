@@ -84,6 +84,18 @@ class AuthNotifier extends AsyncNotifier<void> {
     state = const AsyncLoading();
     state = await AsyncValue.guard(() => _repo.logout());
   }
+
+  /// Updates the user's avatar photo.
+  /// Pass null to remove the avatar.
+  Future<void> updateUserAvatar(String? photoUrl) async {
+    final user = ref.read(currentUserModelProvider).valueOrNull;
+    if (user == null) return;
+    state = const AsyncLoading();
+    state = await AsyncValue.guard(() async {
+      await _repo.updateUserAvatar(user.id, photoUrl);
+      ref.invalidate(currentUserModelProvider);
+    });
+  }
 }
 
 /// The primary auth notifier provider used by all auth screens.

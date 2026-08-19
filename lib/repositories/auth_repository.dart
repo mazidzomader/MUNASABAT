@@ -91,6 +91,14 @@ class AuthRepository {
     return UserModel.fromMap(doc.data()!, doc.id);
   }
 
+  /// Updates the user's avatar photo in Firestore.
+  /// Pass null to remove the avatar photo.
+  Future<void> updateUserAvatar(String uid, String? photoUrl) async {
+    await _firestore.collection('users').doc(uid).update({
+      'photoUrl': photoUrl,
+    });
+  }
+
   // ── Private Helpers ────────────────────────────────────────────────────────
 
   Future<void> _createUserDocument({

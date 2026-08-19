@@ -130,6 +130,7 @@ class InvitationScreen extends ConsumerWidget {
                         "Venue: ${event.venueName}\n\n"
                         "Download the Munasabat app and enter code to join:\n"
                         "$eventCode";
+                    // ignore: deprecated_member_use
                     Share.share(shareText);
                   },
                   icon: const Icon(Icons.share_rounded, color: AppColors.surface),

@@ -2,14 +2,17 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'event_provider.dart';
 import 'checklist_provider.dart';
 import 'expense_provider.dart';
+import 'guest_provider.dart';
 
 class DashboardStats {
   final double tasksDonePercent;
   final int budgetUsed;
+  final int totalGuests;
 
   const DashboardStats({
     this.tasksDonePercent = 0.0,
     this.budgetUsed = 0,
+    this.totalGuests = 0,
   });
 }
 
@@ -21,6 +24,7 @@ final dashboardStatsProvider = Provider<DashboardStats>((ref) {
   int totalTasks = 0;
   int completedTasks = 0;
   int totalSpent = 0;
+  int guestCount = 0;
 
   for (final event in eventsList) {
     final checklist = ref.watch(checklistProvider(event.id)).valueOrNull ?? [];
@@ -29,6 +33,9 @@ final dashboardStatsProvider = Provider<DashboardStats>((ref) {
 
     final expenses = ref.watch(expensesProvider(event.id)).valueOrNull ?? [];
     totalSpent += expenses.fold<int>(0, (sum, exp) => sum + exp.amount);
+
+    final guests = ref.watch(guestsProvider(event.id)).valueOrNull ?? [];
+    guestCount += guests.length;
   }
 
   final double percent = totalTasks == 0 ? 0.0 : (completedTasks / totalTasks);
@@ -36,5 +43,6 @@ final dashboardStatsProvider = Provider<DashboardStats>((ref) {
   return DashboardStats(
     tasksDonePercent: percent,
     budgetUsed: totalSpent,
+    totalGuests: guestCount,
   );
 });

@@ -7,7 +7,7 @@ class GiftModel {
   final String? message;
   final bool isAnonymous;
   final String paymentStatus; // "pending" | "succeeded" | "failed"
-  final String? sslcommerzTranId;
+  final String? stripePaymentIntentId;
   final DateTime? createdAt;
 
   const GiftModel({
@@ -19,7 +19,7 @@ class GiftModel {
     this.message,
     this.isAnonymous = false,
     this.paymentStatus = 'pending',
-    this.sslcommerzTranId,
+    this.stripePaymentIntentId,
     this.createdAt,
   });
 
@@ -33,7 +33,7 @@ class GiftModel {
       message: map['message'] as String?,
       isAnonymous: map['isAnonymous'] as bool? ?? false,
       paymentStatus: map['paymentStatus'] as String? ?? 'pending',
-      sslcommerzTranId: map['sslcommerzTranId'] as String?,
+      stripePaymentIntentId: map['stripePaymentIntentId'] as String?,
       createdAt: map['createdAt'] != null
           ? DateTime.fromMillisecondsSinceEpoch(
               map['createdAt'].millisecondsSinceEpoch)
@@ -50,7 +50,7 @@ class GiftModel {
       'message': message,
       'isAnonymous': isAnonymous,
       'paymentStatus': paymentStatus,
-      'sslcommerzTranId': sslcommerzTranId,
+      'stripePaymentIntentId': stripePaymentIntentId,
       'createdAt': createdAt,
     };
   }

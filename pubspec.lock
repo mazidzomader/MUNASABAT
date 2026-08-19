@@ -398,6 +398,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.6.1"
+  flutter_stripe:
+    dependency: "direct main"
+    description:
+      name: flutter_stripe
+      sha256: "72cc9ca5e2155e69a6c2401c054bab7d125b5bb02df8eb89cf87b77a33a5c429"
+      url: "https://pub.dev"
+    source: hosted
+    version: "14.0.0"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -408,6 +416,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  freezed_annotation:
+    dependency: transitive
+    description:
+      name: freezed_annotation
+      sha256: "7294967ff0a6d98638e7acb774aac3af2550777accd8149c90af5b014e6d44d8"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.1.0"
   go_router:
     dependency: "direct main"
     description:
@@ -544,6 +560,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.0"
+  json_annotation:
+    dependency: transitive
+    description:
+      name: json_annotation
+      sha256: "2a743920d81b7910627f68ee2c9ac1fc0bfee32b9fc3403587d7c6791ca12f80"
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.12.0"
   latlong2:
     dependency: "direct main"
     description:
@@ -957,6 +981,30 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.4.1"
+  stripe_android:
+    dependency: transitive
+    description:
+      name: stripe_android
+      sha256: fd42b88bc2f5c53e5e1fec1d6f09a6f8ed7d0976928105be602f770c4a01f0f3
+      url: "https://pub.dev"
+    source: hosted
+    version: "14.0.0"
+  stripe_ios:
+    dependency: transitive
+    description:
+      name: stripe_ios
+      sha256: b7bb9e47613c1c308534983485031e92d046997bb570e599c38173fb03c3162b
+      url: "https://pub.dev"
+    source: hosted
+    version: "14.0.0"
+  stripe_platform_interface:
+    dependency: transitive
+    description:
+      name: stripe_platform_interface
+      sha256: "27811b76bc16a72fc78e32319e12a9b862e853bbea554febc33ec510e98abb78"
+      url: "https://pub.dev"
+    source: hosted
+    version: "14.0.0"
   synchronized:
     dependency: transitive
     description:

@@ -30,6 +30,27 @@ service cloud.firestore {
       match /guests/{guestId} {
         allow read, write: if request.auth != null; // For MVP, keeping it open to auth users
       }
+
+      // Gifts belong to an event. Any authenticated user can send (write) a gift,
+      // and any authenticated user can read (for host wallet view).
+      match /gifts/{giftId} {
+        allow read, write: if request.auth != null;
+      }
+
+      // Memories (Gallery photos) belong to an event. Allow any authenticated user to read/write for MVP.
+      match /memories/{memoryId} {
+        allow read, write: if request.auth != null;
+      }
+
+      // Premium Status belongs to an event. Allow any authenticated user to read/write for MVP.
+      match /premium_status/{statusId} {
+        allow read, write: if request.auth != null;
+      }
+
+      // Withdrawals belong to an event. Allow any authenticated user to read/write for MVP.
+      match /withdrawals/{withdrawalId} {
+        allow read, write: if request.auth != null;
+      }
     }
 
     // ── Everything else — locked until subsequent phases open them ──────────

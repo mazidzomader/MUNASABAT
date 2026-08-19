@@ -8,8 +8,15 @@ import '../../features/dashboard/dashboard_screen.dart';
 import '../../features/event/event_screen.dart';
 import '../../features/checklist/checklist_screen.dart';
 import '../../features/budget/budget_screen.dart';
+import '../../features/memories/memories_screen.dart';
+import '../../features/memories/widgets/full_screen_image_viewer.dart';
+import '../../models/memory_model.dart';
+import '../../features/premium/premium_upgrade_screen.dart';
 import '../../features/guest/guest_screen.dart';
 import '../../features/invitations/invitation_screen.dart';
+import '../../features/guest_portal/attending_screen.dart';
+import '../../features/gifts/send_gift_screen.dart';
+import '../../features/gifts/gift_wallet_screen.dart';
 import 'package:latlong2/latlong.dart';
 import '../../providers/auth_provider.dart';
 
@@ -27,6 +34,9 @@ abstract class AppRoutes {
   static const eventBudget = '/event/:eventId/budget';
   static const eventGuests = '/event/:eventId/guests';
   static const eventInvitation = '/event/:eventId/invitation';
+  static const eventAttending = '/event/:eventId/attending';
+  static const sendGift = '/event/:eventId/gifts/send';
+  static const giftWallet = '/event/:eventId/gifts/wallet';
   static const locationPicker = '/location-picker';
 }
 
@@ -139,11 +149,60 @@ final routerProvider = Provider<GoRouter>((ref) {
         },
       ),
       GoRoute(
+        path: AppRoutes.eventAttending,
+        builder: (ctx, state) {
+          final eventId = state.pathParameters['eventId']!;
+          return AttendingScreen(eventId: eventId);
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.sendGift,
+        builder: (ctx, state) {
+          final eventId = state.pathParameters['eventId']!;
+          return SendGiftScreen(eventId: eventId);
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.giftWallet,
+        builder: (ctx, state) {
+          final eventId = state.pathParameters['eventId']!;
+          return GiftWalletScreen(eventId: eventId);
+        },
+      ),
+      GoRoute(
         path: AppRoutes.locationPicker,
         builder: (context, state) {
           final initial = state.extra as LatLng?;
           return LocationPickerScreen(initialLocation: initial);
         },
+      ),
+      GoRoute(
+        path: '/event/:eventId/premium',
+        builder: (ctx, state) {
+          final eventId = state.pathParameters['eventId']!;
+          return PremiumUpgradeScreen(eventId: eventId);
+        },
+      ),
+      GoRoute(
+        path: '/event/:eventId/memories',
+        builder: (ctx, state) {
+          final eventId = state.pathParameters['eventId']!;
+          return MemoriesScreen(eventId: eventId);
+        },
+        routes: [
+          GoRoute(
+            path: 'viewer',
+            builder: (ctx, state) {
+              final extra = state.extra as Map<String, dynamic>;
+              final memories = extra['memories'] as List<MemoryModel>;
+              final initialIndex = extra['initialIndex'] as int;
+              return FullScreenImageViewer(
+                memories: memories,
+                initialIndex: initialIndex,
+              );
+            },
+          ),
+        ],
       ),
     ],
     errorBuilder: (_, state) => Scaffold(

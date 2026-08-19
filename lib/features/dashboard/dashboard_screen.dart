@@ -1,14 +1,19 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_gradients.dart';
 import '../../core/theme/app_text_styles.dart';
+import '../../models/user_model.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/event_provider.dart';
 import '../../providers/dashboard_stats_provider.dart';
+import '../../providers/guest_provider.dart';
+import '../guest_portal/join_event_modal.dart';
 
 // =============================================================================
 // UNIFIED DASHBOARD SCREEN
@@ -27,16 +32,14 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final userModel = ref.watch(currentUserModelProvider);
-    final userName = userModel.valueOrNull?.name ?? 'Host';
-    final userEmail = userModel.valueOrNull?.email ?? '';
+    final userModel = ref.watch(currentUserModelProvider).valueOrNull;
+    final userName = userModel?.name ?? 'Host';
 
     return Scaffold(
       key: _scaffoldKey,
       backgroundColor: AppColors.cream,
       drawer: _AppDrawer(
-        userName: userName,
-        userEmail: userEmail,
+        userModel: userModel,
         ref: ref,
       ),
       floatingActionButton: Column(
@@ -46,9 +49,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
           FloatingActionButton.small(
             heroTag: 'join_event',
             onPressed: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Join Event feature coming in Phase 6')),
-              );
+              showJoinEventModal(context);
             },
             backgroundColor: AppColors.surface,
             shape: RoundedRectangleBorder(
@@ -151,10 +152,6 @@ class _HostingTabView extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const _HostEventsList(),
-          const SizedBox(height: 28),
-          Text('Recent Activity', style: AppTextStyles.titleMedium),
-          const SizedBox(height: 12),
-          const _RecentActivity(),
         ],
       ),
     );
@@ -177,13 +174,11 @@ class _AttendingTabView extends StatelessWidget {
 
 class _AppDrawer extends StatelessWidget {
   const _AppDrawer({
-    required this.userName,
-    required this.userEmail,
+    required this.userModel,
     required this.ref,
   });
 
-  final String userName;
-  final String userEmail;
+  final UserModel? userModel;
   final WidgetRef ref;
 
   static const List<_DrawerItem> _items = [
@@ -242,7 +237,7 @@ class _AppDrawer extends StatelessWidget {
       ),
       child: Column(
         children: [
-          _DrawerHeader(userName: userName, userEmail: userEmail),
+          _DrawerHeader(userModel: userModel, ref: ref),
           Expanded(
             child: ListView.separated(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -288,9 +283,199 @@ class _AppDrawer extends StatelessWidget {
 }
 
 class _DrawerHeader extends StatelessWidget {
-  const _DrawerHeader({required this.userName, required this.userEmail});
-  final String userName;
-  final String userEmail;
+  const _DrawerHeader({required this.userModel, required this.ref});
+  final UserModel? userModel;
+  final WidgetRef ref;
+
+  String get userName => userModel?.name ?? 'Host';
+  String get userEmail => userModel?.email ?? '';
+
+  Future<void> _handleAvatarTap(BuildContext context) async {
+    final hasPhoto =
+        userModel?.photoUrl != null && userModel!.photoUrl!.isNotEmpty;
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: AppColors.surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (ctx) {
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+                  child: Row(
+                    children: [
+                      Text('Profile Photo',
+                          style: AppTextStyles.titleLarge
+                              .copyWith(color: AppColors.brandInk)),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 8),
+                ListTile(
+                  leading: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: AppColors.accentBlue.withAlpha(25),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(Icons.photo_library_outlined,
+                        color: AppColors.accentBlue),
+                  ),
+                  title: const Text('Choose from Gallery'),
+                  onTap: () {
+                    Navigator.pop(ctx);
+                    _pickAndUpload(context, ImageSource.gallery);
+                  },
+                ),
+                ListTile(
+                  leading: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: AppColors.accentPink.withAlpha(25),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(Icons.camera_alt_outlined,
+                        color: AppColors.accentPink),
+                  ),
+                  title: const Text('Take a Photo'),
+                  onTap: () {
+                    Navigator.pop(ctx);
+                    _pickAndUpload(context, ImageSource.camera);
+                  },
+                ),
+                if (hasPhoto) ...[
+                  const Divider(),
+                  ListTile(
+                    leading: Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: AppColors.statusDeclined.withAlpha(25),
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(Icons.delete_outline_rounded,
+                          color: AppColors.statusDeclined),
+                    ),
+                    title: const Text('Remove Photo',
+                        style: TextStyle(color: AppColors.statusDeclined)),
+                    onTap: () async {
+                      Navigator.pop(ctx);
+                      try {
+                        await ref
+                            .read(authNotifierProvider.notifier)
+                            .updateUserAvatar(null);
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content: Text('Avatar removed successfully.')),
+                          );
+                        }
+                      } catch (e) {
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                                content: Text('Failed to remove avatar: $e')),
+                          );
+                        }
+                      }
+                    },
+                  ),
+                ],
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _pickAndUpload(BuildContext context, ImageSource source) async {
+    try {
+      final picker = ImagePicker();
+      final pickedFile = await picker.pickImage(
+        source: source,
+        maxWidth: 400,
+        maxHeight: 400,
+        imageQuality: 50,
+      );
+
+      if (pickedFile == null) return;
+
+      final bytes = await pickedFile.readAsBytes();
+      final base64String = base64Encode(bytes);
+
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+              content: Text('Updating avatar...'),
+              duration: Duration(seconds: 1)),
+        );
+      }
+
+      await ref
+          .read(authNotifierProvider.notifier)
+          .updateUserAvatar(base64String);
+
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Avatar updated successfully!')),
+        );
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to update avatar: $e')),
+        );
+      }
+    }
+  }
+
+  Widget _buildAvatarWidget() {
+    final photoUrl = userModel?.photoUrl;
+    if (photoUrl != null && photoUrl.isNotEmpty) {
+      if (photoUrl.startsWith('http')) {
+        return ClipOval(
+          child: Image.network(
+            photoUrl,
+            width: 52,
+            height: 52,
+            fit: BoxFit.cover,
+            errorBuilder: (context, error, stackTrace) => const Icon(
+                Icons.person_outline_rounded,
+                color: AppColors.charcoal,
+                size: 26),
+          ),
+        );
+      } else {
+        try {
+          return ClipOval(
+            child: Image.memory(
+              base64Decode(photoUrl),
+              width: 52,
+              height: 52,
+              fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) => const Icon(
+                  Icons.person_outline_rounded,
+                  color: AppColors.charcoal,
+                  size: 26),
+            ),
+          );
+        } catch (_) {
+          return const Icon(Icons.person_outline_rounded,
+              color: AppColors.charcoal, size: 26);
+        }
+      }
+    }
+    return const Icon(Icons.person_outline_rounded,
+        color: AppColors.charcoal, size: 26);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -320,20 +505,47 @@ class _DrawerHeader extends StatelessWidget {
             padding: const EdgeInsets.fromLTRB(20, 24, 20, 24),
             child: Row(
               children: [
-                Container(
-                  width: 52,
-                  height: 52,
-                  decoration: BoxDecoration(
-                    color: AppColors.surface,
-                    shape: BoxShape.circle,
-                    border: Border.all(color: AppColors.brandInk, width: 2),
-                    boxShadow: [
-                      BoxShadow(
-                          color: AppColors.ink.withAlpha(15), blurRadius: 8)
+                GestureDetector(
+                  onTap: () => _handleAvatarTap(context),
+                  child: Stack(
+                    children: [
+                      Container(
+                        width: 52,
+                        height: 52,
+                        decoration: BoxDecoration(
+                          color: AppColors.surface,
+                          shape: BoxShape.circle,
+                          border:
+                              Border.all(color: AppColors.brandInk, width: 2),
+                          boxShadow: [
+                            BoxShadow(
+                                color: AppColors.ink.withAlpha(15),
+                                blurRadius: 8)
+                          ],
+                        ),
+                        alignment: Alignment.center,
+                        child: _buildAvatarWidget(),
+                      ),
+                      Positioned(
+                        bottom: 0,
+                        right: 0,
+                        child: Container(
+                          padding: const EdgeInsets.all(3),
+                          decoration: BoxDecoration(
+                            color: AppColors.brandInk,
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                                color: AppColors.surface, width: 1.5),
+                          ),
+                          child: const Icon(
+                            Icons.camera_alt_rounded,
+                            size: 10,
+                            color: AppColors.surface,
+                          ),
+                        ),
+                      ),
                     ],
                   ),
-                  child: const Icon(Icons.person_outline_rounded,
-                      color: AppColors.charcoal, size: 26),
                 ),
                 const SizedBox(width: 14),
                 Expanded(
@@ -416,6 +628,18 @@ class _DrawerTile extends ConsumerWidget {
         } else if (item.label == 'Invitations') {
           _showEventPicker(rootContext, ref, (eventId) {
             GoRouter.of(rootContext).push('/event/$eventId/invitation');
+          });
+        } else if (item.label == 'Gifts') {
+          _showEventPicker(rootContext, ref, (eventId) {
+            GoRouter.of(rootContext).push('/event/$eventId/gifts/wallet');
+          });
+        } else if (item.label == 'Memories') {
+          _showEventPicker(rootContext, ref, (eventId) {
+            GoRouter.of(rootContext).push('/event/$eventId/memories');
+          });
+        } else if (item.label == 'Subscription Plan') {
+          _showEventPicker(rootContext, ref, (eventId) {
+            GoRouter.of(rootContext).push('/event/$eventId/premium');
           });
         }
       },
@@ -531,10 +755,6 @@ class _DashboardHeader extends StatelessWidget {
                           color: AppColors.brandInk,
                           onTap: onMenuTap),
                       const Spacer(),
-                      _HeaderButton(
-                          icon: Icons.notifications_none_rounded,
-                          color: AppColors.charcoal,
-                          onTap: () {}),
                     ],
                   ),
                   const SizedBox(height: 20),
@@ -610,12 +830,12 @@ class _StatsGrid extends ConsumerWidget {
             icon: Icons.event_rounded,
             iconColor: AppColors.accentBlue,
             bgColor: const Color(0xFFDFEBFF)),
-        const _StatCard(
+        _StatCard(
             label: 'Guests',
-            value: '0',
+            value: '${stats.totalGuests}',
             icon: Icons.people_outline_rounded,
             iconColor: AppColors.accentPink,
-            bgColor: Color(0xFFFFE4FA)),
+            bgColor: const Color(0xFFFFE4FA)),
         _StatCard(
             label: 'Tasks Done',
             value: '${(stats.tasksDonePercent * 100).toInt()}%',
@@ -830,52 +1050,83 @@ class _AttendingEventsList extends ConsumerWidget {
           separatorBuilder: (context, index) => const SizedBox(height: 16),
           itemBuilder: (context, index) {
             final event = events[index];
-            return GestureDetector(
-              onTap: () => context.push('/event/${event.id}'),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: AppColors.surface,
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: AppColors.brandInk, width: 1),
-                  boxShadow: [
-                    BoxShadow(
-                      color: AppColors.ink.withAlpha(10),
-                      blurRadius: 10,
-                      offset: const Offset(0, 3),
-                    ),
-                  ],
-                ),
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      event.title,
-                      style: AppTextStyles.titleMedium
-                          .copyWith(color: AppColors.brandInk),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        const Icon(Icons.calendar_today_rounded,
-                            size: 12, color: AppColors.accentBlue),
-                        const SizedBox(width: 6),
-                        Expanded(
-                          child: Text(
-                            DateFormat('MMM d, yyyy').format(event.date),
-                            style: AppTextStyles.labelSmall
-                                .copyWith(color: AppColors.charcoal),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
+            return Consumer(
+              builder: (context, ref, child) {
+                final guestStatus = ref.watch(currentGuestStatusProvider(event.id)).valueOrNull;
+                final isPending = guestStatus?.status == 'requested';
+
+                return GestureDetector(
+                  onTap: () {
+                    // Navigate to AttendingScreen (Event Details)
+                    context.push('/event/${event.id}/attending');
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: AppColors.surface,
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: AppColors.brandInk, width: 1),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColors.ink.withAlpha(10),
+                          blurRadius: 10,
+                          offset: const Offset(0, 3),
                         ),
                       ],
                     ),
-                  ],
-                ),
-              ),
+                    padding: const EdgeInsets.all(16),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                event.title,
+                                style: AppTextStyles.titleMedium
+                                    .copyWith(color: AppColors.brandInk),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              const SizedBox(height: 8),
+                              Row(
+                                children: [
+                                  const Icon(Icons.calendar_today_rounded,
+                                      size: 12, color: AppColors.accentBlue),
+                                  const SizedBox(width: 6),
+                                  Expanded(
+                                    child: Text(
+                                      DateFormat('MMM d, yyyy').format(event.date),
+                                      style: AppTextStyles.labelSmall
+                                          .copyWith(color: AppColors.charcoal),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                        if (isPending)
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                            margin: const EdgeInsets.only(left: 8),
+                            decoration: BoxDecoration(
+                              color: AppColors.statusPending.withAlpha(20),
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(color: AppColors.statusPending, width: 1),
+                            ),
+                            child: Text(
+                              'Pending',
+                              style: AppTextStyles.labelSmall.copyWith(color: AppColors.statusPending),
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+                );
+              }
             );
           },
         );
@@ -887,106 +1138,6 @@ class _AttendingEventsList extends ConsumerWidget {
         ),
       ),
       error: (err, _) => Text('Error loading events: $err'),
-    );
-  }
-}
-
-// ── Recent Activity ───────────────────────────────────────────────────────────
-
-class _RecentActivity extends StatelessWidget {
-  const _RecentActivity();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.brandInk, width: 1),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.ink.withAlpha(10),
-            blurRadius: 10,
-            offset: const Offset(0, 3),
-          ),
-        ],
-      ),
-      child: const Column(
-        children: [
-          _ActivityItem(
-            icon: Icons.celebration_outlined,
-            iconColor: AppColors.accentBlue,
-            title: 'Welcome to Munasabat!',
-            subtitle: 'Create your first wedding event to get started.',
-            isLast: false,
-          ),
-          _ActivityItem(
-            icon: Icons.tips_and_updates_outlined,
-            iconColor: AppColors.accentPink,
-            title: 'Tip: Add your guests early',
-            subtitle: 'Invitations with QR codes are generated automatically.',
-            isLast: true,
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _ActivityItem extends StatelessWidget {
-  const _ActivityItem({
-    required this.icon,
-    required this.iconColor,
-    required this.title,
-    required this.subtitle,
-    required this.isLast,
-  });
-
-  final IconData icon;
-  final Color iconColor;
-  final String title;
-  final String subtitle;
-  final bool isLast;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(16),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                width: 40,
-                height: 40,
-                decoration: BoxDecoration(
-                  color: iconColor.withAlpha(24),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Icon(icon, color: iconColor, size: 20),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(title,
-                        style: AppTextStyles.titleMedium
-                            .copyWith(color: AppColors.ink)),
-                    const SizedBox(height: 2),
-                    Text(subtitle,
-                        style: AppTextStyles.bodyMedium
-                            .copyWith(color: AppColors.charcoal)),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-        if (!isLast)
-          Divider(height: 1, thickness: 1, color: AppColors.divider),
-      ],
     );
   }
 }
