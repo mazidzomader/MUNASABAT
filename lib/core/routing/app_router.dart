@@ -77,7 +77,12 @@ final routerProvider = Provider<GoRouter>((ref) {
       if (!isLoggedIn && !isOnAuth) return AppRoutes.login;
       
       if (isLoggedIn && isOnAuth) {
-        return AppRoutes.dashboard;
+        final userModel = ref.read(currentUserModelProvider).valueOrNull;
+        if (userModel != null) {
+          return AppRoutes.dashboard;
+        } else {
+          return null; // Stay on auth screens while user model is being created/fetched
+        }
       }
       return null;
     },

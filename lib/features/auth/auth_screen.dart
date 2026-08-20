@@ -485,6 +485,10 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     final error = ref.read(authNotifierProvider).error;
     if (error != null) {
       showErrorSnackbar(context, error.toString());
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Account created successfully! Please log in.')),
+      );
     }
   }
 

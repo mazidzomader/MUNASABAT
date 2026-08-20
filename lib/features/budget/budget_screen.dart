@@ -7,6 +7,7 @@ import 'package:intl/intl.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_text_styles.dart';
 import '../../core/widgets/loading_overlay.dart';
+import '../../core/widgets/gradient_button.dart';
 import '../../models/event_model.dart';
 import '../../providers/event_provider.dart';
 import '../../providers/expense_provider.dart';
@@ -54,11 +55,14 @@ class BudgetScreen extends ConsumerWidget {
           error: (err, _) => Center(child: Text('Error: $err')),
         ),
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => _showAddExpenseModal(context, ref),
-        backgroundColor: AppColors.brandInk,
-        icon: const Icon(Icons.add_rounded, color: AppColors.surface),
-        label: Text('Add Expense', style: AppTextStyles.button.copyWith(color: AppColors.surface)),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+        child: GradientButton(
+          label: 'Add Expense',
+          icon: Icons.add_rounded,
+          onPressed: () => _showAddExpenseModal(context, ref),
+        ),
       ),
     );
   }
@@ -96,68 +100,64 @@ class BudgetScreen extends ConsumerWidget {
       margin: const EdgeInsets.all(20),
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [AppColors.gradientBlue1, AppColors.gradientBlue3],
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            AppColors.accentBlueSoft.withAlpha(127),
+            AppColors.surface,
+            AppColors.accentPinkSoft.withAlpha(127),
+          ],
         ),
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(24),
         border: Border.all(color: AppColors.brandInk, width: 1),
         boxShadow: [
           BoxShadow(
-            color: AppColors.accentBlue.withAlpha(40),
+            color: AppColors.ink.withAlpha(15),
             blurRadius: 16,
             offset: const Offset(0, 8),
           ),
         ],
       ),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Total Budget',
-                    style: AppTextStyles.bodyMedium.copyWith(color: AppColors.surface.withAlpha(200)),
+              Text(
+                'Total Budget',
+                style: AppTextStyles.labelSmall.copyWith(color: AppColors.charcoal, letterSpacing: 1.2),
+              ),
+              GestureDetector(
+                onTap: () => _showSetBudgetModal(context, ref, event),
+                child: Container(
+                  padding: const EdgeInsets.all(6),
+                  decoration: BoxDecoration(
+                    color: AppColors.surface.withAlpha(200),
+                    shape: BoxShape.circle,
                   ),
-                  const SizedBox(height: 4),
-                  Row(
-                    children: [
-                      Text(
-                        event.totalBudget == null ? 'Not Set' : format.format(budget),
-                        style: AppTextStyles.displayLarge.copyWith(color: AppColors.surface, fontSize: 32),
-                      ),
-                      const SizedBox(width: 8),
-                      GestureDetector(
-                        onTap: () => _showSetBudgetModal(context, ref, event),
-                        child: Container(
-                          padding: const EdgeInsets.all(4),
-                          decoration: BoxDecoration(
-                            color: AppColors.surface.withAlpha(40),
-                            shape: BoxShape.circle,
-                          ),
-                          child: const Icon(Icons.edit_rounded, color: AppColors.surface, size: 16),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
+                  child: const Icon(Icons.edit_rounded, color: AppColors.brandInk, size: 18),
+                ),
               ),
             ],
+          ),
+          const SizedBox(height: 8),
+          Text(
+            event.totalBudget == null ? 'Not Set' : format.format(budget),
+            style: AppTextStyles.displayLarge.copyWith(color: AppColors.brandInk, fontSize: 36, height: 1.1),
           ),
           const SizedBox(height: 32),
           ClipRRect(
             borderRadius: BorderRadius.circular(8),
             child: LinearProgressIndicator(
               value: progress,
-              backgroundColor: AppColors.surface.withAlpha(40),
-              color: isOverBudget ? AppColors.statusDeclined : AppColors.surface,
-              minHeight: 8,
+              backgroundColor: AppColors.surface.withAlpha(200),
+              color: isOverBudget ? AppColors.statusDeclined : AppColors.brandInk,
+              minHeight: 10,
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 24),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -166,11 +166,12 @@ class BudgetScreen extends ConsumerWidget {
                 children: [
                   Text(
                     'Spent',
-                    style: AppTextStyles.bodyMedium.copyWith(color: AppColors.surface.withAlpha(200)),
+                    style: AppTextStyles.bodyMedium.copyWith(color: AppColors.charcoal),
                   ),
+                  const SizedBox(height: 4),
                   Text(
                     format.format(totalSpent),
-                    style: AppTextStyles.titleMedium.copyWith(color: AppColors.surface),
+                    style: AppTextStyles.titleLarge.copyWith(color: AppColors.brandInk),
                   ),
                 ],
               ),
@@ -179,12 +180,13 @@ class BudgetScreen extends ConsumerWidget {
                 children: [
                   Text(
                     'Remaining',
-                    style: AppTextStyles.bodyMedium.copyWith(color: AppColors.surface.withAlpha(200)),
+                    style: AppTextStyles.bodyMedium.copyWith(color: AppColors.charcoal),
                   ),
+                  const SizedBox(height: 4),
                   Text(
                     format.format(remaining),
-                    style: AppTextStyles.titleMedium.copyWith(
-                      color: isOverBudget ? AppColors.statusDeclined : AppColors.surface,
+                    style: AppTextStyles.titleLarge.copyWith(
+                      color: isOverBudget ? AppColors.statusDeclined : AppColors.brandInk,
                       fontWeight: isOverBudget ? FontWeight.bold : FontWeight.w600,
                     ),
                   ),
@@ -275,37 +277,49 @@ class BudgetScreen extends ConsumerWidget {
         alignment: Alignment.centerRight,
         decoration: BoxDecoration(
           color: AppColors.statusDeclined,
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(16),
         ),
         child: const Icon(Icons.delete_outline_rounded, color: AppColors.surface),
       ),
-      child: Material(
-        color: AppColors.surface,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-          side: const BorderSide(color: AppColors.brandInk, width: 1),
-        ),
-        clipBehavior: Clip.antiAlias,
-        child: ListTile(
-          leading: Container(
-            width: 48,
-            height: 48,
-            decoration: BoxDecoration(
-              color: iconColor.withAlpha(25),
-              borderRadius: BorderRadius.circular(12),
+      child: Container(
+        decoration: BoxDecoration(
+          color: AppColors.surface,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: AppColors.brandInk, width: 1),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.ink.withAlpha(12),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
             ),
-            child: Icon(icon, color: iconColor),
-          ),
-          title: Text(expense.label, style: AppTextStyles.titleMedium),
-          subtitle: Text(
-            expense.category,
-            style: AppTextStyles.bodyMedium.copyWith(color: AppColors.stone),
-          ),
-          trailing: Text(
-            format.format(expense.amount),
-            style: AppTextStyles.titleMedium.copyWith(
-              color: AppColors.brandInk,
-              fontWeight: FontWeight.bold,
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(16),
+          child: Material(
+            color: Colors.transparent,
+            child: ListTile(
+              leading: Container(
+                width: 48,
+                height: 48,
+                decoration: BoxDecoration(
+                  color: iconColor.withAlpha(25),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(icon, color: iconColor),
+              ),
+              title: Text(expense.label, style: AppTextStyles.titleMedium),
+              subtitle: Text(
+                expense.category,
+                style: AppTextStyles.bodyMedium.copyWith(color: AppColors.stone),
+              ),
+              trailing: Text(
+                format.format(expense.amount),
+                style: AppTextStyles.titleMedium.copyWith(
+                  color: AppColors.brandInk,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ),
           ),
         ),

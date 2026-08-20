@@ -33,8 +33,6 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
   @override
   Widget build(BuildContext context) {
     final userModel = ref.watch(currentUserModelProvider).valueOrNull;
-    final userName = userModel?.name ?? 'Host';
-
     return Scaffold(
       key: _scaffoldKey,
       backgroundColor: AppColors.cream,
@@ -73,7 +71,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
           headerSliverBuilder: (context, innerBoxIsScrolled) {
             return [
               _DashboardHeader(
-                userName: userName,
+                userModel: userModel,
                 onMenuTap: () => _scaffoldKey.currentState?.openDrawer(),
               ),
               SliverPadding(
@@ -441,7 +439,8 @@ class _DrawerHeader extends StatelessWidget {
     final photoUrl = userModel?.photoUrl;
     if (photoUrl != null && photoUrl.isNotEmpty) {
       if (photoUrl.startsWith('http')) {
-        return ClipOval(
+        return ClipRRect(
+          borderRadius: BorderRadius.circular(16),
           child: Image.network(
             photoUrl,
             width: 52,
@@ -455,7 +454,8 @@ class _DrawerHeader extends StatelessWidget {
         );
       } else {
         try {
-          return ClipOval(
+          return ClipRRect(
+            borderRadius: BorderRadius.circular(16),
             child: Image.memory(
               base64Decode(photoUrl),
               width: 52,
@@ -514,9 +514,9 @@ class _DrawerHeader extends StatelessWidget {
                         height: 52,
                         decoration: BoxDecoration(
                           color: AppColors.surface,
-                          shape: BoxShape.circle,
+                          borderRadius: BorderRadius.circular(16),
                           border:
-                              Border.all(color: AppColors.brandInk, width: 2),
+                              Border.all(color: AppColors.brandInk, width: 1.5),
                           boxShadow: [
                             BoxShadow(
                                 color: AppColors.ink.withAlpha(15),
@@ -705,15 +705,62 @@ class _DrawerTile extends ConsumerWidget {
 // ── Dashboard Header ──────────────────────────────────────────────────────────
 
 class _DashboardHeader extends StatelessWidget {
-  const _DashboardHeader({required this.userName, required this.onMenuTap});
-  final String userName;
+  const _DashboardHeader({required this.userModel, required this.onMenuTap});
+  final UserModel? userModel;
   final VoidCallback onMenuTap;
+
+  String get userName => userModel?.name ?? 'Host';
 
   String get _greeting {
     final h = DateTime.now().hour;
     if (h < 12) return 'morning';
     if (h < 17) return 'afternoon';
     return 'evening';
+  }
+
+  Widget _buildMiniAvatar() {
+    final photoUrl = userModel?.photoUrl;
+    Widget placeholder = Container(
+      width: 64,
+      height: 64,
+      decoration: BoxDecoration(
+        color: AppColors.surface.withAlpha(200),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColors.brandInk, width: 1),
+      ),
+      child: const Icon(Icons.person_outline_rounded, color: AppColors.brandInk, size: 32),
+    );
+
+    if (photoUrl != null && photoUrl.isNotEmpty) {
+      if (photoUrl.startsWith('http')) {
+        return ClipRRect(
+          borderRadius: BorderRadius.circular(16),
+          child: Image.network(
+            photoUrl,
+            width: 64,
+            height: 64,
+            fit: BoxFit.cover,
+            errorBuilder: (_, _, _) => placeholder,
+          ),
+        );
+      } else {
+        try {
+          return ClipRRect(
+            borderRadius: BorderRadius.circular(16),
+            child: Image.memory(
+              base64Decode(photoUrl),
+              width: 64,
+              height: 64,
+              fit: BoxFit.cover,
+              errorBuilder: (_, _, _) => placeholder,
+            ),
+          );
+        } catch (_) {
+          return placeholder;
+        }
+      }
+    }
+    return placeholder;
   }
 
   @override
@@ -725,7 +772,7 @@ class _DashboardHeader extends StatelessWidget {
               top: 0,
               left: 0,
               right: 0,
-              height: 200,
+              height: 220,
               child: Container(
                   decoration:
                       const BoxDecoration(gradient: AppGradients.heroBlue))),
@@ -733,7 +780,7 @@ class _DashboardHeader extends StatelessWidget {
             top: 0,
             left: 0,
             right: 0,
-            height: 200,
+            height: 220,
             child: Opacity(
               opacity: 0.6,
               child: Container(
@@ -754,18 +801,48 @@ class _DashboardHeader extends StatelessWidget {
                           icon: Icons.menu_rounded,
                           color: AppColors.brandInk,
                           onTap: onMenuTap),
-                      const Spacer(),
                     ],
                   ),
-                  const SizedBox(height: 20),
-                  Text('Good $_greeting,',
-                      style: AppTextStyles.bodyLarge
-                          .copyWith(color: AppColors.charcoal)),
-                  Text(userName, style: AppTextStyles.headlineMedium),
-                  const SizedBox(height: 6),
-                  Text('Plan your perfect celebration 🎉',
-                      style: AppTextStyles.bodyMedium
-                          .copyWith(color: AppColors.charcoal)),
+                  const SizedBox(height: 24),
+                  Row(
+                    children: [
+                      Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(16),
+                          boxShadow: [
+                            BoxShadow(
+                                color: AppColors.ink.withAlpha(15),
+                                blurRadius: 8,
+                                offset: const Offset(0, 2))
+                          ],
+                        ),
+                        child: _buildMiniAvatar(),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              DateFormat('EEEE, MMMM d').format(DateTime.now()).toUpperCase(),
+                              style: AppTextStyles.labelSmall.copyWith(
+                                color: AppColors.brandInkLight,
+                                letterSpacing: 1.2,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Text('Good $_greeting,',
+                                style: AppTextStyles.bodyLarge
+                                    .copyWith(color: AppColors.charcoal, fontSize: 18)),
+                            const SizedBox(height: 2),
+                            Text(userName, 
+                                style: AppTextStyles.headlineMedium.copyWith(fontSize: 28, height: 1.1)),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
                 ],
               ),
             ),
@@ -791,11 +868,10 @@ class _HeaderButton extends StatelessWidget {
         width: 44,
         height: 44,
         decoration: BoxDecoration(
-          color: AppColors.surface.withAlpha(200),
-          shape: BoxShape.circle,
-          border: Border.all(color: AppColors.brandInk, width: 1),
+          color: Colors.transparent,
+          borderRadius: BorderRadius.circular(12),
         ),
-        child: Icon(icon, color: color, size: 22),
+        child: Icon(icon, color: color, size: 28),
       ),
     );
   }

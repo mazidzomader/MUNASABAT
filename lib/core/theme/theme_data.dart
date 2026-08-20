@@ -126,11 +126,11 @@ ThemeData buildAppTheme() {
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(10),
-        borderSide: const BorderSide(color: AppColors.brandInk, width: 1),
+        borderSide: const BorderSide(color: AppColors.divider, width: 1),
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(10),
-        borderSide: const BorderSide(color: AppColors.brandInk, width: 1),
+        borderSide: const BorderSide(color: AppColors.divider, width: 1),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(10),
@@ -149,10 +149,10 @@ ThemeData buildAppTheme() {
     // ── Card ────────────────────────────────────────────────────────────────
     cardTheme: CardThemeData(
       color: AppColors.surface,
-      elevation: 0,
+      elevation: 2,
+      shadowColor: AppColors.ink.withAlpha(38),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
-        side: const BorderSide(color: AppColors.brandInk, width: 1),
       ),
       margin: EdgeInsets.zero,
     ),

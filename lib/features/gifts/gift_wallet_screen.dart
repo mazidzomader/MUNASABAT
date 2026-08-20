@@ -20,15 +20,15 @@ class GiftWalletScreen extends ConsumerWidget {
     return Scaffold(
       backgroundColor: AppColors.cream,
       appBar: AppBar(
-        backgroundColor: AppColors.brandInk,
+        backgroundColor: AppColors.cream,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_rounded, color: AppColors.surface),
+          icon: const Icon(Icons.arrow_back_rounded, color: AppColors.brandInk),
           onPressed: () => context.pop(),
         ),
         title: Text(
           'Gift Wallet',
-          style: AppTextStyles.titleLarge.copyWith(color: AppColors.surface),
+          style: AppTextStyles.titleLarge.copyWith(color: AppColors.brandInk),
         ),
         centerTitle: true,
       ),
@@ -47,25 +47,39 @@ class GiftWalletScreen extends ConsumerWidget {
                   // Dashboard Header
                   Container(
                     width: double.infinity,
-                    padding: const EdgeInsets.only(left: 24, right: 24, bottom: 32, top: 24),
-                    decoration: const BoxDecoration(
-                      color: AppColors.brandInk,
-                      borderRadius: BorderRadius.only(
-                        bottomLeft: Radius.circular(32),
-                        bottomRight: Radius.circular(32),
+                    margin: const EdgeInsets.all(20),
+                    padding: const EdgeInsets.all(24),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          AppColors.accentBlueSoft.withAlpha(127),
+                          AppColors.surface,
+                          AppColors.accentPinkSoft.withAlpha(127),
+                        ],
                       ),
+                      borderRadius: BorderRadius.circular(24),
+                      border: Border.all(color: AppColors.brandInk, width: 1),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColors.ink.withAlpha(15),
+                          blurRadius: 16,
+                          offset: const Offset(0, 8),
+                        ),
+                      ],
                     ),
                     child: Column(
                       children: [
                         Text(
                           'Available Balance',
-                          style: AppTextStyles.titleMedium.copyWith(color: AppColors.stone),
+                          style: AppTextStyles.titleMedium.copyWith(color: AppColors.charcoal),
                         ),
                         const SizedBox(height: 8),
                         Text(
                           '\$${availableBalance.toStringAsFixed(2)}',
                           style: AppTextStyles.displayLarge.copyWith(
-                            color: AppColors.surface,
+                            color: AppColors.brandInk,
                             fontSize: 48,
                           ),
                         ),
@@ -77,29 +91,29 @@ class GiftWalletScreen extends ConsumerWidget {
                               children: [
                                 Text(
                                   'Total Received',
-                                  style: AppTextStyles.labelSmall.copyWith(color: AppColors.stone),
+                                  style: AppTextStyles.labelSmall.copyWith(color: AppColors.charcoal),
                                 ),
                                 Text(
                                   '\$${totalAmount.toStringAsFixed(2)}',
-                                  style: AppTextStyles.titleMedium.copyWith(color: AppColors.surface),
+                                  style: AppTextStyles.titleMedium.copyWith(color: AppColors.brandInk),
                                 ),
                               ],
                             ),
                             Container(
                               width: 1,
                               height: 30,
-                              color: AppColors.stone.withAlpha(128),
+                              color: AppColors.brandInk.withAlpha(50),
                               margin: const EdgeInsets.symmetric(horizontal: 16),
                             ),
                             Column(
                               children: [
                                 Text(
                                   'Platform Fee (10%)',
-                                  style: AppTextStyles.labelSmall.copyWith(color: AppColors.stone),
+                                  style: AppTextStyles.labelSmall.copyWith(color: AppColors.charcoal),
                                 ),
                                 Text(
                                   '\$${platformFee.toStringAsFixed(2)}',
-                                  style: AppTextStyles.titleMedium.copyWith(color: AppColors.surface),
+                                  style: AppTextStyles.titleMedium.copyWith(color: AppColors.brandInk),
                                 ),
                               ],
                             ),
@@ -111,10 +125,10 @@ class GiftWalletScreen extends ConsumerWidget {
                               ? () => _showWithdrawDialog(context, ref, availableBalance)
                               : null,
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.accentPink,
-                            foregroundColor: AppColors.brandInk,
-                            disabledBackgroundColor: AppColors.surface.withAlpha(51),
-                            disabledForegroundColor: AppColors.surface.withAlpha(128),
+                            backgroundColor: AppColors.brandInk,
+                            foregroundColor: AppColors.surface,
+                            disabledBackgroundColor: AppColors.surface.withAlpha(128),
+                            disabledForegroundColor: AppColors.brandInk.withAlpha(128),
                             padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
@@ -165,9 +179,14 @@ class GiftWalletScreen extends ConsumerWidget {
                                       children: [
                                         Row(
                                           children: [
-                                            CircleAvatar(
-                                              backgroundColor: AppColors.accentBlue.withAlpha(20),
-                                              radius: 20,
+                                            Container(
+                                              width: 40,
+                                              height: 40,
+                                              decoration: BoxDecoration(
+                                                color: AppColors.accentBlue.withAlpha(20),
+                                                borderRadius: BorderRadius.circular(12),
+                                              ),
+                                              alignment: Alignment.center,
                                               child: const Icon(Icons.person_rounded, color: AppColors.accentBlue, size: 20),
                                             ),
                                             const SizedBox(width: 12),

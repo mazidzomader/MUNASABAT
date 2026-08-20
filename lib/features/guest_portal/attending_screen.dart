@@ -8,7 +8,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_text_styles.dart';
-import '../../core/widgets/primary_button.dart';
+import '../../core/widgets/gradient_button.dart';
 import '../../providers/event_provider.dart';
 import '../../providers/guest_provider.dart';
 
@@ -32,7 +32,7 @@ class AttendingScreen extends ConsumerWidget {
             );
           }
 
-          final displayDate = DateFormat('EEEE, MMMM d, yyyy \n h:mm a').format(event.date);
+          final displayDate = DateFormat('EEEE, MMMM d, yyyy \n h:mm a').format(event.date).toUpperCase();
 
           return guestStatusAsync.when(
             data: (currentGuest) {
@@ -207,9 +207,14 @@ class AttendingScreen extends ConsumerWidget {
                                   ),
                                   child: Row(
                                     children: [
-                                      CircleAvatar(
-                                        backgroundColor: isMe ? AppColors.accentBlue.withAlpha(20) : AppColors.brandInk.withAlpha(10),
-                                        radius: 18,
+                                      Container(
+                                        width: 36,
+                                        height: 36,
+                                        decoration: BoxDecoration(
+                                          color: isMe ? AppColors.accentBlue.withAlpha(20) : AppColors.brandInk.withAlpha(10),
+                                          borderRadius: BorderRadius.circular(12),
+                                        ),
+                                        alignment: Alignment.center,
                                         child: Text(
                                           guest.name.substring(0, 1).toUpperCase(),
                                           style: AppTextStyles.titleMedium.copyWith(
@@ -237,15 +242,17 @@ class AttendingScreen extends ConsumerWidget {
                         ),
                         const SizedBox(height: 32),
                         if (currentGuest?.status == 'accepted' || currentGuest?.status == 'checked_in') ...[
-                          PrimaryButton(
+                          GradientButton(
                             label: 'Send a Wedding Gift',
+                            icon: Icons.card_giftcard_rounded,
                             onPressed: () {
                               context.push('/event/${event.id}/gifts/send');
                             },
                           ),
                           const SizedBox(height: 16),
-                          PrimaryButton(
+                          GradientButton(
                             label: 'View Event Gallery',
+                            icon: Icons.photo_library_rounded,
                             onPressed: () {
                               context.push('/event/${event.id}/memories');
                             },

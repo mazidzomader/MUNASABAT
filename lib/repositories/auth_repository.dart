@@ -56,6 +56,9 @@ class AuthRepository {
       email: email,
       phone: phone,
     );
+    
+    // Sign out immediately so they must log in manually
+    await _auth.signOut();
   }
 
   /// Signs in an existing user with email and password.

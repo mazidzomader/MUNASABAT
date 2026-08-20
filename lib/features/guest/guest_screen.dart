@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_text_styles.dart';
 import '../../core/widgets/loading_overlay.dart';
+import '../../core/widgets/gradient_button.dart';
 import '../../models/event_model.dart';
 import '../../models/guest_model.dart';
 import '../../providers/event_provider.dart';
@@ -77,6 +78,7 @@ class _GuestScreenState extends ConsumerState<GuestScreen> {
           error: (err, _) => Center(child: Text('Error: $err')),
         ),
       ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: Consumer(builder: (context, ref, _) {
         final guests = ref.watch(guestsProvider(widget.eventId)).valueOrNull ?? [];
         final premiumStatus = ref.watch(eventPremiumProvider(widget.eventId)).valueOrNull;
@@ -84,13 +86,27 @@ class _GuestScreenState extends ConsumerState<GuestScreen> {
         
         final isLimitReached = !hasUnlimited && guests.length >= 20;
 
-        return FloatingActionButton.extended(
-          onPressed: isLimitReached ? () {
-            context.push('/event/${widget.eventId}/premium');
-          } : () => _showGuestModal(context, ref, isEdit: false),
-          backgroundColor: isLimitReached ? AppColors.stone : AppColors.brandInk,
-          icon: Icon(isLimitReached ? Icons.lock_rounded : Icons.person_add_alt_1_rounded, color: AppColors.surface),
-          label: Text(isLimitReached ? 'Upgrade to Add' : 'Add Guest', style: AppTextStyles.button.copyWith(color: AppColors.surface)),
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+          child: isLimitReached
+              ? SizedBox(
+                  width: double.infinity,
+                  height: 52,
+                  child: ElevatedButton.icon(
+                    onPressed: () => context.push('/event/${widget.eventId}/premium'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.stone,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    ),
+                    icon: const Icon(Icons.lock_rounded, color: AppColors.surface),
+                    label: Text('Upgrade to Add', style: AppTextStyles.button.copyWith(color: AppColors.surface)),
+                  ),
+                )
+              : GradientButton(
+                  label: 'Add Guest',
+                  icon: Icons.person_add_alt_1_rounded,
+                  onPressed: () => _showGuestModal(context, ref, isEdit: false),
+                ),
         );
       }),
     );

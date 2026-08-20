@@ -15,6 +15,7 @@ import '../../core/widgets/app_text_field.dart';
 import '../../core/widgets/error_snackbar.dart';
 import '../../core/widgets/loading_overlay.dart';
 import '../../core/widgets/primary_button.dart';
+import '../../core/widgets/gradient_button.dart';
 import '../../models/event_model.dart';
 import '../../providers/event_provider.dart';
 
@@ -840,43 +841,49 @@ class EventDetailScreen extends ConsumerWidget {
                       ),
                     ],
                     const SizedBox(height: 40),
-                    PrimaryButton(
+                    GradientButton(
                       label: 'Manage Checklist',
+                      icon: Icons.checklist,
                       onPressed: () {
                         context.push('/event/${event.id}/checklist');
                       },
                     ),
                     const SizedBox(height: 12),
-                    PrimaryButton(
+                    GradientButton(
                       label: 'Manage Budget',
+                      icon: Icons.account_balance_wallet_outlined,
                       onPressed: () {
                         context.push('/event/${event.id}/budget');
                       },
                     ),
                     const SizedBox(height: 12),
-                    PrimaryButton(
+                    GradientButton(
                       label: 'Manage Guests',
+                      icon: Icons.people_outline,
                       onPressed: () {
                         context.push('/event/${event.id}/guests');
                       },
                     ),
                     const SizedBox(height: 12),
-                    PrimaryButton(
+                    GradientButton(
                       label: 'Share Invitation',
+                      icon: Icons.ios_share,
                       onPressed: () {
                         context.push('/event/${event.id}/invitation');
                       },
                     ),
                     const SizedBox(height: 12),
-                    PrimaryButton(
+                    GradientButton(
                       label: 'Gift Wallet',
+                      icon: Icons.card_giftcard,
                       onPressed: () {
                         context.push('/event/${event.id}/gifts/wallet');
                       },
                     ),
                     const SizedBox(height: 12),
-                    PrimaryButton(
+                    GradientButton(
                       label: 'Event Gallery',
+                      icon: Icons.photo_library_outlined,
                       onPressed: () {
                         context.push('/event/${event.id}/memories');
                       },
