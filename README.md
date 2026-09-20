@@ -66,21 +66,29 @@ That's it! The app will automatically connect to the existing Firebase database 
 
 <div align="center">
 
-| Dashboard | Sidebar | Events |
-|:---------:|:-------:|:------:|
-| <img src="docs/ScreenShots/Dashboard.png" width="220"/> | <img src="docs/ScreenShots/Sidebar.png" width="220"/> | <img src="docs/ScreenShots/Events.png" width="220"/> |
+| Dashboard | Sidebar |
+|:---------:|:-------:|
+| <img src="docs/ScreenShots/Dashboard.png" width="340"/> | <img src="docs/ScreenShots/Sidebar.png" width="340"/> |
 
-| Event Gallery | Checklist | Budget Track |
-|:-------------:|:---------:|:------------:|
-| <img src="docs/ScreenShots/Event Gallery.png" width="220"/> | <img src="docs/ScreenShots/Checklist.png" width="220"/> | <img src="docs/ScreenShots/Budget Track.png" width="220"/> |
+| Events | Event Gallery |
+|:------:|:-------------:|
+| <img src="docs/ScreenShots/Events.png" width="340"/> | <img src="docs/ScreenShots/Event Gallery.png" width="340"/> |
 
-| Guest Add | Invitation | Gifts |
-|:---------:|:----------:|:-----:|
-| <img src="docs/ScreenShots/Guest Add.png" width="220"/> | <img src="docs/ScreenShots/Invitation.png" width="220"/> | <img src="docs/ScreenShots/Gifts.png" width="220"/> |
-
-| Send Gift | Subscription |
+| Checklist | Budget Track |
 |:---------:|:------------:|
-| <img src="docs/ScreenShots/Send Gift.png" width="220"/> | <img src="docs/ScreenShots/Subscription.png" width="220"/> |
+| <img src="docs/ScreenShots/Checklist.png" width="340"/> | <img src="docs/ScreenShots/Budget Track.png" width="340"/> |
+
+| Guest Add | Invitation |
+|:---------:|:----------:|
+| <img src="docs/ScreenShots/Guest Add.png" width="340"/> | <img src="docs/ScreenShots/Invitation.png" width="340"/> |
+
+| Gifts | Send Gift |
+|:-----:|:---------:|
+| <img src="docs/ScreenShots/Gifts.png" width="340"/> | <img src="docs/ScreenShots/Send Gift.png" width="340"/> |
+
+| Subscription |
+|:------------:|
+| <img src="docs/ScreenShots/Subscription.png" width="340"/> |
 
 </div>
 
