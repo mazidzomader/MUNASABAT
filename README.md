@@ -62,6 +62,30 @@ This project has all the necessary configurations (including Firebase keys) alre
 
 That's it! The app will automatically connect to the existing Firebase database and the Stripe Sandbox environment out of the box.
 
+## Screenshots
+
+<div align="center">
+
+| Dashboard | Sidebar | Events |
+|:---------:|:-------:|:------:|
+| <img src="docs/Screenshots/Dashboard.png" width="220"/> | <img src="docs/Screenshots/Sidebar.png" width="220"/> | <img src="docs/Screenshots/Events.png" width="220"/> |
+
+| Event Gallery | Checklist | Budget Track |
+|:-------------:|:---------:|:------------:|
+| <img src="docs/Screenshots/Event Gallery.png" width="220"/> | <img src="docs/Screenshots/Checklist.png" width="220"/> | <img src="docs/Screenshots/Budget Track.png" width="220"/> |
+
+| Guest Add | Invitation | Gifts |
+|:---------:|:----------:|:-----:|
+| <img src="docs/Screenshots/Guest Add.png" width="220"/> | <img src="docs/Screenshots/Invitation.png" width="220"/> | <img src="docs/Screenshots/Gifts.png" width="220"/> |
+
+| Send Gift | Subscription |
+|:---------:|:------------:|
+| <img src="docs/Screenshots/Send Gift.png" width="220"/> | <img src="docs/Screenshots/Subscription.png" width="220"/> |
+
+</div>
+
+---
+
 ## License
 
 <p align="center">
