@@ -86,9 +86,9 @@ That's it! The app will automatically connect to the existing Firebase database 
 |:-----:|:---------:|
 | <img src="docs/ScreenShots/Gifts.png" width="340"/> | <img src="docs/ScreenShots/Send Gift.png" width="340"/> |
 
-| Subscription | |
-|:------------:|:-:|
-| <img src="docs/ScreenShots/Subscription.png" width="340"/> | |
+| Subscription | Invitation Share |
+|:------------:|:----------------:|
+| <img src="docs/ScreenShots/Subscription.png" width="340"/> | <img src="docs/ScreenShots/Invitation Share.png" width="340"/> |
 
 </div>
 
